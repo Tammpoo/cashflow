@@ -432,11 +432,16 @@
 <!-- TOAST -->
 <div id="toast-container"></div>
 
-<!-- MODAL: Transaction Details -->
+<!-- MODAL: Transaction Details / Edit -->
 <div class="modal-overlay" id="modal-details">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-details">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div class="modal-title" style="margin-bottom:0;">Dettaglio</div>
+      <button id="det-edit-toggle" onclick="toggleDetEdit()" style="background:var(--gray-100);color:var(--green);padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;">Modifica</button>
+    </div>
+    <!-- VIEW MODE -->
+    <div id="det-view-mode" class="modal-details">
       <div class="modal-details-icon" id="det-icon"></div>
       <div class="modal-details-amount" id="det-amount"></div>
       <div class="modal-details-desc" id="det-desc"></div>
@@ -445,6 +450,40 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         Elimina
       </button>
+    </div>
+    <!-- EDIT MODE -->
+    <div id="det-edit-mode" style="display:none;">
+      <div style="display:flex;background:var(--gray-200);border-radius:14px;padding:4px;margin-bottom:14px;">
+        <button id="det-type-expense" onclick="setDetType('expense')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--gray-500);transition:all 0.15s;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>Spesa
+        </button>
+        <button id="det-type-income" onclick="setDetType('income')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--gray-500);transition:all 0.15s;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Entrata
+        </button>
+      </div>
+      <div style="background:white;border-radius:16px;padding:16px 20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:4px;">Importo</div>
+        <div><span style="font-size:38px;font-weight:700;color:var(--gray-800);" id="det-edit-amount-display">0</span><span style="font-size:16px;color:var(--gray-400);margin-left:4px;">EUR</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('1')">1</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('2')">2</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('3')">3</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('4')">4</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('5')">5</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('6')">6</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('7')">7</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('8')">8</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('9')">9</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('.')">.</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('0')">0</button>
+        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);color:var(--red);" onclick="detKeyPress('C')">C</button>
+      </div>
+      <input class="modal-input" id="det-edit-desc" placeholder="Descrizione (opzionale)" style="margin-bottom:10px;" />
+      <input class="modal-input" type="date" id="det-edit-date" style="margin-bottom:12px;" />
+      <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;">Categoria</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;" id="det-edit-cat-grid"></div>
+      <button id="det-save-btn" onclick="saveTxEdit()" style="width:100%;padding:14px;border-radius:14px;background:var(--green);color:white;font-size:16px;font-weight:700;">Salva modifiche</button>
     </div>
   </div>
 </div>
@@ -573,19 +612,26 @@
       <div class="amount-label">Importo</div>
       <div><span class="amount-value" id="add-amount-display">0</span><span class="amount-currency">EUR</span></div>
     </div>
-    <div class="keypad">
-      <button class="key-btn" onclick="keyPress('1')">1</button>
-      <button class="key-btn" onclick="keyPress('2')">2</button>
-      <button class="key-btn" onclick="keyPress('3')">3</button>
-      <button class="key-btn" onclick="keyPress('4')">4</button>
-      <button class="key-btn" onclick="keyPress('5')">5</button>
-      <button class="key-btn" onclick="keyPress('6')">6</button>
+    <div style="background:white;border-radius:16px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:14px;" id="calc-display-wrap">
+      <div style="text-align:right;font-size:12px;color:var(--gray-400);min-height:18px;margin-bottom:2px;" id="calc-expr-display"></div>
+    </div>
+    <div class="keypad" style="grid-template-columns:repeat(4,1fr);">
       <button class="key-btn" onclick="keyPress('7')">7</button>
       <button class="key-btn" onclick="keyPress('8')">8</button>
       <button class="key-btn" onclick="keyPress('9')">9</button>
+      <button class="key-btn" onclick="keyPress('+')" style="color:var(--green);font-size:24px;">+</button>
+      <button class="key-btn" onclick="keyPress('4')">4</button>
+      <button class="key-btn" onclick="keyPress('5')">5</button>
+      <button class="key-btn" onclick="keyPress('6')">6</button>
+      <button class="key-btn" onclick="keyPress('-')" style="color:var(--green);font-size:28px;">−</button>
+      <button class="key-btn" onclick="keyPress('1')">1</button>
+      <button class="key-btn" onclick="keyPress('2')">2</button>
+      <button class="key-btn" onclick="keyPress('3')">3</button>
+      <button class="key-btn" onclick="keyPress('*')" style="color:var(--green);font-size:24px;">×</button>
       <button class="key-btn" onclick="keyPress('.')">.</button>
       <button class="key-btn" onclick="keyPress('0')">0</button>
-      <button class="key-btn" onclick="keyPress('C')" style="color:var(--red);">C</button>
+      <button class="key-btn" onclick="keyPress('=')" style="background:var(--green);color:white;font-size:22px;">=</button>
+      <button class="key-btn" onclick="keyPress('C')" style="color:var(--red);font-size:16px;font-weight:700;">C</button>
     </div>
     <input class="input-field" id="add-desc" placeholder="Descrizione (opzionale)" />
     <input class="input-field" type="date" id="add-date" />
@@ -1098,22 +1144,55 @@ function selectCat(id) {
   renderAddCats();
 }
 
+// Calculator state
+let calcExpr = ''; // full expression string e.g. "12.50+3"
+const OPERATORS = ['+', '-', '*'];
+
 function keyPress(k) {
-  if (k === 'C') { addAmount = ''; }
-  else if (k === '.') {
+  if (k === 'C') {
+    addAmount = '';
+    calcExpr = '';
+  } else if (k === '=') {
+    // Evaluate expression
+    if (calcExpr) {
+      try {
+        // Safe eval: only numbers, operators, dots
+        if (/^[\d\.\+\-\*]+$/.test(calcExpr)) {
+          const result = Function('"use strict"; return (' + calcExpr + ')')();
+          addAmount = parseFloat(result.toFixed(2)).toString();
+          calcExpr = '';
+        }
+      } catch(e) {}
+    }
+  } else if (OPERATORS.includes(k)) {
+    // If we have a current amount, append operator
+    if (addAmount) {
+      calcExpr = (calcExpr || addAmount) + k;
+      addAmount = '';
+    }
+  } else if (k === '.') {
     if (addAmount.includes('.')) return;
     if (!addAmount) addAmount = '0';
     addAmount += '.';
+    calcExpr = (calcExpr || '') + (calcExpr && !OPERATORS.some(op => calcExpr.endsWith(op)) ? '' : addAmount.endsWith('.') ? '' : '');
   } else {
-    const parts = (addAmount + k).split('.');
+    // digit
+    const newAmt = addAmount + k;
+    const parts = newAmt.split('.');
     if (parts.length > 1 && parts[1].length > 2) return;
-    addAmount += k;
+    addAmount = newAmt;
   }
   updateAmountDisplay();
 }
 
 function updateAmountDisplay() {
   document.getElementById('add-amount-display').textContent = addAmount || '0';
+  const exprEl = document.getElementById('calc-expr-display');
+  if (exprEl) {
+    const opSymbols = {'+':'+', '-':'−', '*':'×'};
+    let display = calcExpr.replace(/[\+\-\*]/g, op => ' ' + (opSymbols[op]||op) + ' ');
+    exprEl.textContent = display;
+  }
 }
 
 function submitTransaction() {
@@ -1195,6 +1274,11 @@ function openTxDetail(id) {
   document.getElementById('det-amount').style.color = tx.type==='income' ? 'var(--green)' : 'var(--red)';
   document.getElementById('det-desc').textContent = tx.description || cat.name;
   document.getElementById('det-date').textContent = fmtDate(tx.date);
+  // Reset to view mode
+  document.getElementById('det-view-mode').style.display = 'block';
+  document.getElementById('det-edit-mode').style.display = 'none';
+  const etBtn = document.getElementById('det-edit-toggle');
+  etBtn.textContent = 'Modifica'; etBtn.style.color = 'var(--green)';
   openModal('modal-details');
 }
 
@@ -1208,6 +1292,111 @@ document.getElementById('det-delete-btn').onclick = function() {
   renderTransactions();
   if (currentPage === 'home') renderHome();
 };
+
+// ---- EDIT TX ----
+let detEditType = 'expense';
+let detEditAmount = '';
+let detEditCatId = null;
+
+function toggleDetEdit() {
+  const viewMode = document.getElementById('det-view-mode');
+  const editMode = document.getElementById('det-edit-mode');
+  const btn = document.getElementById('det-edit-toggle');
+  if (editMode.style.display === 'none') {
+    // Switch to edit
+    viewMode.style.display = 'none';
+    editMode.style.display = 'block';
+    btn.textContent = 'Annulla';
+    btn.style.color = 'var(--red)';
+    // Pre-fill from current tx
+    const txs = getTransactions();
+    const tx = txs.find(t => t.id === detailTxId);
+    if (!tx) return;
+    detEditType = tx.type;
+    detEditAmount = tx.amount.toString();
+    detEditCatId = tx.categoryId;
+    document.getElementById('det-edit-amount-display').textContent = detEditAmount;
+    document.getElementById('det-edit-desc').value = tx.description || '';
+    document.getElementById('det-edit-date').value = tx.date;
+    updateDetTypeUI();
+    renderDetEditCats();
+  } else {
+    // Back to view
+    viewMode.style.display = 'block';
+    editMode.style.display = 'none';
+    btn.textContent = 'Modifica';
+    btn.style.color = 'var(--green)';
+  }
+}
+
+function setDetType(t) {
+  detEditType = t;
+  detEditCatId = null;
+  updateDetTypeUI();
+  renderDetEditCats();
+}
+
+function updateDetTypeUI() {
+  const eBtn = document.getElementById('det-type-expense');
+  const iBtn = document.getElementById('det-type-income');
+  if (detEditType === 'expense') {
+    eBtn.style.background = 'var(--red)'; eBtn.style.color = 'white'; eBtn.style.boxShadow = '0 2px 6px rgba(239,68,68,0.3)';
+    iBtn.style.background = 'transparent'; iBtn.style.color = 'var(--gray-500)'; iBtn.style.boxShadow = 'none';
+  } else {
+    iBtn.style.background = 'var(--green)'; iBtn.style.color = 'white'; iBtn.style.boxShadow = '0 2px 6px rgba(34,197,94,0.3)';
+    eBtn.style.background = 'transparent'; eBtn.style.color = 'var(--gray-500)'; eBtn.style.boxShadow = 'none';
+  }
+  const saveBtn = document.getElementById('det-save-btn');
+  if (saveBtn) saveBtn.style.background = detEditType === 'expense' ? 'var(--red)' : 'var(--green)';
+}
+
+function renderDetEditCats() {
+  const cats = getCategories().filter(c => c.type === detEditType).sort((a,b) => a.name.localeCompare(b.name,'it'));
+  document.getElementById('det-edit-cat-grid').innerHTML = cats.map(cat => {
+    const sel = detEditCatId === cat.id;
+    const selClass = sel ? (detEditType==='expense' ? ' selected-expense' : ' selected-income') : '';
+    return `<button class="cat-btn${selClass}" onclick="selectDetCat(${cat.id})">
+      ${categoryIconHtml(cat.icon, cat.color, 16)}
+      <span>${cat.name}</span>
+    </button>`;
+  }).join('');
+}
+
+function selectDetCat(id) {
+  detEditCatId = id;
+  renderDetEditCats();
+}
+
+function detKeyPress(k) {
+  if (k === 'C') { detEditAmount = ''; }
+  else if (k === '.') {
+    if (detEditAmount.includes('.')) return;
+    if (!detEditAmount) detEditAmount = '0';
+    detEditAmount += '.';
+  } else {
+    const parts = (detEditAmount + k).split('.');
+    if (parts.length > 1 && parts[1].length > 2) return;
+    detEditAmount += k;
+  }
+  document.getElementById('det-edit-amount-display').textContent = detEditAmount || '0';
+}
+
+function saveTxEdit() {
+  const amount = parseFloat(detEditAmount);
+  if (!detEditAmount || isNaN(amount) || amount <= 0) { toast('Importo non valido', 'error'); return; }
+  if (!detEditCatId) { toast('Seleziona una categoria', 'error'); return; }
+  const date = document.getElementById('det-edit-date').value;
+  const desc = document.getElementById('det-edit-desc').value.trim();
+  let txs = getTransactions();
+  const idx = txs.findIndex(t => t.id === detailTxId);
+  if (idx < 0) return;
+  txs[idx] = { ...txs[idx], amount, type: detEditType, categoryId: detEditCatId, description: desc || null, date };
+  saveTransactions(txs);
+  closeModal('modal-details');
+  toast('Movimento aggiornato!');
+  renderTransactions();
+  if (currentPage === 'home') renderHome();
+}
 
 // ============================
 // REPORTS
