@@ -635,9 +635,9 @@
     </div>
     <input class="input-field" id="add-desc" placeholder="Descrizione (opzionale)" />
     <input class="input-field" type="date" id="add-date" />
+    <button class="submit-btn expense" id="add-submit-btn" onclick="submitTransaction()" style="margin-bottom:14px;">Salva</button>
     <div class="cat-section-title">Categoria</div>
     <div class="cat-grid" id="add-cat-grid"></div>
-    <button class="submit-btn expense" id="add-submit-btn" onclick="submitTransaction()">Salva</button>
   </div>
 </div>
 
@@ -1145,56 +1145,75 @@ function selectCat(id) {
 }
 
 // Calculator state
-let calcExpr = ''; // full expression string e.g. "12.50+3"
-const OPERATORS = ['+', '-', '*'];
+let calcLeft = '';
+let calcOp = '';
+let calcRight = '';
+let calcJustEvaled = false;
 
 function keyPress(k) {
   if (k === 'C') {
+    calcLeft = ''; calcOp = ''; calcRight = ''; calcJustEvaled = false;
     addAmount = '';
-    calcExpr = '';
   } else if (k === '=') {
-    // Evaluate expression
-    if (calcExpr) {
-      try {
-        // Safe eval: only numbers, operators, dots
-        if (/^[\d\.\+\-\*]+$/.test(calcExpr)) {
-          const result = Function('"use strict"; return (' + calcExpr + ')')();
-          addAmount = parseFloat(result.toFixed(2)).toString();
-          calcExpr = '';
-        }
-      } catch(e) {}
+    if (calcLeft && calcOp && calcRight) {
+      const l = parseFloat(calcLeft);
+      const r = parseFloat(calcRight);
+      let result = 0;
+      if (calcOp === '+') result = l + r;
+      else if (calcOp === '-') result = l - r;
+      else if (calcOp === '*') result = l * r;
+      result = Math.round(result * 100) / 100;
+      addAmount = result.toString();
+      calcLeft = addAmount; calcOp = ''; calcRight = ''; calcJustEvaled = true;
     }
-  } else if (OPERATORS.includes(k)) {
-    // If we have a current amount, append operator
-    if (addAmount) {
-      calcExpr = (calcExpr || addAmount) + k;
+  } else if (['+','-','*'].includes(k)) {
+    if (addAmount || calcLeft) {
+      calcLeft = addAmount || calcLeft;
+      calcOp = k;
+      calcRight = '';
       addAmount = '';
+      calcJustEvaled = false;
     }
   } else if (k === '.') {
-    if (addAmount.includes('.')) return;
-    if (!addAmount) addAmount = '0';
-    addAmount += '.';
-    calcExpr = (calcExpr || '') + (calcExpr && !OPERATORS.some(op => calcExpr.endsWith(op)) ? '' : addAmount.endsWith('.') ? '' : '');
+    if (calcOp) {
+      if (calcRight.includes('.')) return;
+      calcRight = (calcRight || '0') + '.';
+    } else {
+      if (addAmount.includes('.')) return;
+      addAmount = (addAmount || '0') + '.';
+    }
   } else {
-    // digit
-    const newAmt = addAmount + k;
-    const parts = newAmt.split('.');
-    if (parts.length > 1 && parts[1].length > 2) return;
-    addAmount = newAmt;
+    if (calcOp) {
+      const newVal = calcRight + k;
+      const parts = newVal.split('.');
+      if (parts.length > 1 && parts[1].length > 2) return;
+      calcRight = newVal;
+    } else {
+      if (calcJustEvaled) { addAmount = k; calcLeft = ''; calcJustEvaled = false; }
+      else {
+        const newVal = addAmount + k;
+        const parts = newVal.split('.');
+        if (parts.length > 1 && parts[1].length > 2) return;
+        addAmount = newVal;
+      }
+    }
   }
   updateAmountDisplay();
 }
 
 function updateAmountDisplay() {
-  document.getElementById('add-amount-display').textContent = addAmount || '0';
+  const opSymbols = {'+':'+', '-':'−', '*':'×'};
+  const mainVal = calcOp ? (calcRight || '0') : (addAmount || '0');
+  document.getElementById('add-amount-display').textContent = mainVal;
   const exprEl = document.getElementById('calc-expr-display');
   if (exprEl) {
-    const opSymbols = {'+':'+', '-':'−', '*':'×'};
-    let display = calcExpr.replace(/[\+\-\*]/g, op => ' ' + (opSymbols[op]||op) + ' ');
-    exprEl.textContent = display;
+    if (calcLeft && calcOp) {
+      exprEl.textContent = calcLeft + ' ' + (opSymbols[calcOp] || calcOp) + (calcRight ? ' ' + calcRight : '');
+    } else {
+      exprEl.textContent = '';
+    }
   }
 }
-
 function submitTransaction() {
   const amount = parseFloat(addAmount);
   if (!addAmount || isNaN(amount) || amount <= 0) { toast('Inserisci un importo valido', 'error'); return; }
