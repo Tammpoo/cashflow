@@ -5,8 +5,8 @@
   "start_url": "/cashflow/",
   "scope": "/cashflow/",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#16a34a",
+  "background_color": "#EDF0EE",
+  "theme_color": "#123324",
   "orientation": "portrait",
   "icons": [
     {
