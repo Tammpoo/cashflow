@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#16a34a" />
+  <meta name="theme-color" content="#123324" id="meta-theme-color" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CashFlow" />
@@ -12,77 +12,118 @@
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>CashFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
     :root {
-      --green: #16a34a;
-      --green-light: #22c55e;
-      --green-dark: #15803d;
-      --red: #ef4444;
-      --red-light: #fca5a5;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
+      /* ---- ledger palette (light) ---- */
+      --bg: #EDF0EE;
+      --surface: #FFFFFF;
+      --surface-alt: #F5F6F4;
+      --press: #D7DED8;
+      --ink: #16211D;
+      --ink-soft: #5B675F;
+      --ink-faint: #8C978F;
+      --line: #DCE1DD;
+      --line-strong: #C7CFC9;
+
+      --forest: #1F6F4A;
+      --forest-deep: #123324;
+      --forest-soft: #DEEEE4;
+      --mint: #4FAE79;
+
+      --clay: #A9503A;
+      --clay-soft: #F3E3DC;
+
+      --gold: #A9791E;
+      --gold-soft: #F3EBD6;
+
       --white: #ffffff;
       --font: 'DM Sans', sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-top: env(safe-area-inset-top, 0px);
+      --r-lg: 20px;
+      --r-md: 14px;
+      --r-sm: 10px;
     }
+    html[data-theme="dark"] {
+      --bg: #0F1613;
+      --surface: #17211D;
+      --surface-alt: #1C2723;
+      --press: #33443C;
+      --ink: #EBEFEC;
+      --ink-soft: #9CA9A2;
+      --ink-faint: #6B7873;
+      --line: #29342F;
+      --line-strong: #384540;
+
+      --forest: #4FAE79;
+      --forest-deep: #0C2018;
+      --forest-soft: #1C3A2C;
+      --mint: #6FCB98;
+
+      --clay: #D9805F;
+      --clay-soft: #3A281F;
+
+      --gold: #D2A94A;
+      --gold-soft: #362D19;
+
+      --white: #17211D;
+    }
+
     html, body {
       font-family: var(--font);
-      background: var(--gray-50);
-      color: var(--gray-800);
+      background: var(--bg);
+      color: var(--ink);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
+      touch-action: manipulation;
     }
-    button { font-family: var(--font); cursor: pointer; border: none; background: none; }
-    input { font-family: var(--font); }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; color: inherit; }
+    input { font-family: var(--font); color: inherit; }
     a { text-decoration: none; color: inherit; }
+    .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
     /* ===== PAGES ===== */
-    .page { display: none; min-height: 100vh; padding-bottom: calc(72px + var(--safe-bottom)); }
+    .page { display: none; min-height: 100vh; padding-bottom: calc(78px + var(--safe-bottom)); }
     .page.active { display: block; }
 
     /* ===== BOTTOM NAV ===== */
     #bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--white);
-      border-top: 1px solid var(--gray-200);
+      background: var(--surface);
+      border-top: 1px solid var(--line);
       z-index: 100;
       padding-bottom: var(--safe-bottom);
     }
-    .nav-inner { display: flex; align-items: center; justify-content: space-around; height: 56px; max-width: 480px; margin: 0 auto; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-around; height: 58px; max-width: 480px; margin: 0 auto; }
     .nav-btn {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 2px; width: 64px; height: 100%;
-      color: var(--gray-400); font-size: 10px; font-weight: 500;
+      gap: 3px; width: 64px; height: 100%;
+      color: var(--ink-faint); font-size: 10px; font-weight: 600;
       transition: color 0.15s;
     }
-    .nav-btn.active { color: var(--green); }
-    .nav-btn svg { width: 22px; height: 22px; stroke-width: 2; }
-    .nav-btn.active svg { stroke-width: 2.5; }
+    .nav-btn.active { color: var(--forest); }
+    .nav-btn svg { width: 21px; height: 21px; stroke-width: 1.75; }
+    .nav-btn.active svg { stroke-width: 2.25; }
     .nav-add {
-      width: 50px; height: 50px; border-radius: 50%;
-      background: var(--green); color: white;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--forest-deep); color: var(--mint);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(22,163,74,0.4);
+      box-shadow: 0 6px 16px rgba(18,51,36,0.35);
       margin-bottom: 4px;
     }
-    .nav-add svg { width: 24px; height: 24px; stroke-width: 2.5; }
+    .nav-add svg { width: 24px; height: 24px; stroke-width: 2.25; color: #fff; }
 
-    /* ===== HEADER ===== */
+    /* ===== HEADER (inner pages) ===== */
     .page-header {
-      background: var(--green);
-      color: white;
+      background: var(--forest-deep);
+      color: #fff;
       padding: calc(var(--safe-top) + 16px) 16px 16px;
     }
     .page-header-inner { max-width: 480px; margin: 0 auto; }
@@ -90,298 +131,316 @@
     .back-btn {
       width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(255,255,255,0.15); color: white; margin-left: -4px;
+      background: rgba(255,255,255,0.12); color: white; margin-left: -4px;
     }
     .back-btn svg { width: 20px; height: 20px; }
-    .page-title { font-size: 20px; font-weight: 700; }
+    .page-title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
 
     /* ===== HOME ===== */
     #home-header {
-      background: var(--green);
-      color: white;
-      padding: calc(var(--safe-top) + 16px) 16px 32px;
+      background: var(--forest-deep);
+      color: #fff;
+      padding: calc(var(--safe-top) + 18px) 16px 40px;
     }
     .home-header-inner { max-width: 480px; margin: 0 auto; }
-    .home-month { font-size: 13px; color: rgba(255,255,255,0.75); text-transform: capitalize; }
-    .home-greeting { font-size: 24px; font-weight: 700; margin-top: 2px; }
+    .home-top-row { display: flex; align-items: center; justify-content: space-between; }
+    .home-month { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .home-greeting { font-size: 21px; font-weight: 700; margin-top: 2px; letter-spacing: -0.01em; }
     .balance-card {
-      margin-top: 16px;
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      padding: 16px;
+      margin-top: 18px;
+      padding: 4px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.14);
     }
-    .balance-label { font-size: 13px; color: rgba(255,255,255,0.75); }
-    .balance-amount { font-size: 36px; font-weight: 700; margin-top: 4px; }
-    .home-content { max-width: 480px; margin: 0 auto; padding: 0 16px; margin-top: -16px; }
+    .balance-label { font-size: 12.5px; color: rgba(255,255,255,0.55); margin-top: 14px; }
+    .balance-amount { font-size: 40px; font-weight: 600; margin-top: 4px; letter-spacing: -0.01em; }
+    .home-content { max-width: 480px; margin: 0 auto; padding: 0 16px; margin-top: -22px; }
     .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .stat-card {
-      background: white; border-radius: 14px; padding: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      background: var(--surface); border-radius: var(--r-md); padding: 14px;
+      border: 1px solid var(--line);
     }
     .stat-card-row { display: flex; align-items: center; gap: 8px; }
     .stat-icon {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
-    .stat-icon svg { width: 16px; height: 16px; }
-    .stat-label { font-size: 12px; color: var(--gray-500); }
-    .stat-value { font-size: 17px; font-weight: 700; margin-top: 6px; }
+    .stat-icon svg { width: 15px; height: 15px; }
+    .stat-label { font-size: 12px; color: var(--ink-soft); }
+    .stat-value { font-size: 17px; font-weight: 600; margin-top: 7px; }
     .quick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     .quick-btn {
-      border-radius: 14px; padding: 14px 16px;
+      border-radius: var(--r-md); padding: 14px 16px;
       display: flex; align-items: center; gap: 10px;
-      font-size: 15px; font-weight: 600; color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      active: scale(0.97);
+      font-size: 14.5px; font-weight: 600; color: white;
     }
-    .quick-btn svg { width: 20px; height: 20px; }
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 10px; }
-    .section-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
-    .section-link { font-size: 13px; color: var(--green); display: flex; align-items: center; gap: 2px; }
+    .quick-btn svg { width: 18px; height: 18px; }
+    .quick-btn.expense { background: var(--clay); }
+    .quick-btn.income { background: var(--forest); }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 10px; }
+    .section-title { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+    .section-link { font-size: 13px; color: var(--forest); display: flex; align-items: center; gap: 2px; font-weight: 600; }
     .section-link svg { width: 14px; height: 14px; }
-    .tx-list { display: flex; flex-direction: column; gap: 8px; }
-    .tx-item {
-      background: white; border-radius: 14px; padding: 12px;
-      display: flex; align-items: center; gap: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+    /* list container = single bordered surface with hairline dividers (no per-row shadow) */
+    .list-surface { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+    .tx-list.list-surface .tx-swipe:not(:last-child),
+    .tx-list.list-surface .tx-item:not(:last-child) { border-bottom: 1px solid var(--line); }
+
+    .tx-swipe { position: relative; overflow: hidden; background: var(--clay); }
+    .tx-swipe-action {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 18px; color: #fff; font-size: 12.5px; font-weight: 700; gap: 6px;
     }
-    .tx-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .tx-icon svg { width: 18px; height: 18px; }
-    .tx-info { flex: 1; min-width: 0; }
-    .tx-name { font-size: 13px; font-weight: 500; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tx-date { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
-    .tx-amount { font-size: 14px; font-weight: 600; flex-shrink: 0; }
-    .tx-amount.income { color: var(--green); }
-    .tx-amount.expense { color: var(--red); }
-    .cat-bar-item {
-      background: white; border-radius: 14px; padding: 12px;
+    .tx-swipe-action svg { width: 16px; height: 16px; }
+    .tx-item {
+      background: var(--surface); padding: 12px 14px;
       display: flex; align-items: center; gap: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      touch-action: pan-y; position: relative;
+    }
+    .tx-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tx-icon svg { width: 17px; height: 17px; }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-name { font-size: 13.5px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-date { font-size: 11.5px; color: var(--ink-faint); margin-top: 1px; }
+    .tx-amount { font-size: 14px; font-weight: 600; flex-shrink: 0; }
+    .tx-amount.income { color: var(--forest); }
+    .tx-amount.expense { color: var(--clay); }
+    .cat-bar-item {
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
     }
     .cat-bar-info { flex: 1; min-width: 0; }
-    .cat-bar-name { font-size: 13px; font-weight: 500; color: var(--gray-800); }
-    .cat-bar-track { width: 100%; background: var(--gray-100); border-radius: 99px; height: 5px; margin-top: 5px; }
+    .cat-bar-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .cat-bar-track { width: 100%; background: var(--surface-alt); border-radius: 99px; height: 5px; margin-top: 6px; }
     .cat-bar-fill { height: 5px; border-radius: 99px; }
-    .cat-bar-amount { font-size: 13px; font-weight: 600; color: var(--gray-700); flex-shrink: 0; }
+    .cat-bar-amount { font-size: 13px; font-weight: 600; color: var(--ink-soft); flex-shrink: 0; }
     .empty-state {
-      background: white; border-radius: 14px; padding: 40px 20px;
-      text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--r-md); padding: 34px 20px;
+      text-align: center;
     }
-    .empty-state svg { width: 40px; height: 40px; color: var(--gray-300); margin: 0 auto 10px; display: block; }
-    .empty-state p { font-size: 14px; color: var(--gray-400); }
+    .empty-state svg { width: 30px; height: 30px; color: var(--ink-faint); margin: 0 auto 10px; display: block; }
+    .empty-state p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
 
     /* ===== ADD TRANSACTION ===== */
-    #add-page { background: var(--gray-50); }
+    #add-page { background: var(--bg); }
     .add-content { max-width: 480px; margin: 0 auto; padding: 16px; }
     .type-toggle {
-      display: flex; background: var(--gray-200); border-radius: 14px; padding: 4px; margin-bottom: 16px;
+      display: flex; background: var(--surface-alt); border: 1px solid var(--line); border-radius: var(--r-md); padding: 4px; margin-bottom: 16px;
     }
     .type-btn {
       flex: 1; display: flex; align-items: center; justify-content: center;
-      gap: 6px; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600;
-      color: var(--gray-500); transition: all 0.15s;
+      gap: 6px; padding: 10px; border-radius: var(--r-sm); font-size: 14px; font-weight: 600;
+      color: var(--ink-soft); transition: all 0.15s;
     }
-    .type-btn svg { width: 16px; height: 16px; }
-    .type-btn.active-expense { background: var(--red); color: white; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
-    .type-btn.active-income { background: var(--green); color: white; box-shadow: 0 2px 6px rgba(34,197,94,0.3); }
+    .type-btn svg { width: 15px; height: 15px; }
+    .type-btn.active-expense { background: var(--clay); color: white; }
+    .type-btn.active-income { background: var(--forest); color: white; }
     .amount-display {
-      background: white; border-radius: 18px; padding: 24px;
-      text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 14px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 22px;
+      text-align: center; margin-bottom: 14px;
     }
-    .amount-label { font-size: 12px; color: var(--gray-400); margin-bottom: 6px; }
-    .amount-value { font-size: 42px; font-weight: 700; color: var(--gray-800); }
-    .amount-currency { font-size: 18px; color: var(--gray-400); font-weight: 500; margin-left: 4px; }
+    .amount-label { font-size: 12px; color: var(--ink-faint); margin-bottom: 6px; }
+    .amount-value { font-size: 40px; font-weight: 600; color: var(--ink); }
+    .amount-currency { font-size: 17px; color: var(--ink-faint); font-weight: 500; margin-left: 4px; }
     .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
     .key-btn {
-      background: white; border-radius: 14px; padding: 16px;
-      font-size: 22px; font-weight: 600; color: var(--gray-800);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 15px;
+      font-size: 21px; font-weight: 600; color: var(--ink);
       transition: background 0.1s;
-      active: background-color var(--gray-100);
     }
-    .key-btn:active { background: var(--gray-100); }
+    .key-btn { transition: background 0.1s, transform 0.08s; }
+    .key-btn:active { background: var(--press); transform: scale(0.94); }
     .input-field {
-      width: 100%; background: white; border: 1px solid var(--gray-200);
-      border-radius: 14px; padding: 12px 16px; font-size: 15px; color: var(--gray-800);
+      width: 100%; background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--r-md); padding: 12px 16px; font-size: 16px; color: var(--ink);
       margin-bottom: 12px; outline: none;
     }
-    .input-field:focus { border-color: var(--green); }
-    .cat-section-title { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
+    .input-field:focus { border-color: var(--forest); }
+    .cat-section-title { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; }
     .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
     .cat-btn {
       display: flex; flex-direction: column; align-items: center; gap: 5px;
-      padding: 12px 4px; border-radius: 14px; background: white;
-      border: 2px solid transparent;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06); transition: all 0.1s;
+      padding: 12px 4px; border-radius: var(--r-md); background: var(--surface);
+      border: 1.5px solid var(--line);
+      transition: all 0.1s;
     }
-    .cat-btn span { font-size: 11px; font-weight: 500; color: var(--gray-700); text-align: center; line-height: 1.2; }
-    .cat-btn.selected-expense { border-color: var(--red); background: #fff5f5; }
-    .cat-btn.selected-income { border-color: var(--green); background: #f0fdf4; }
+    .cat-btn span { font-size: 11px; font-weight: 500; color: var(--ink-soft); text-align: center; line-height: 1.2; }
+    .cat-btn.selected-expense { border-color: var(--clay); background: var(--clay-soft); }
+    .cat-btn.selected-expense span { color: var(--clay); font-weight: 700; }
+    .cat-btn.selected-income { border-color: var(--forest); background: var(--forest-soft); }
+    .cat-btn.selected-income span { color: var(--forest); font-weight: 700; }
     .submit-btn {
-      width: 100%; padding: 16px; border-radius: 16px;
-      font-size: 17px; font-weight: 700; color: white;
+      width: 100%; padding: 16px; border-radius: var(--r-md);
+      font-size: 16.5px; font-weight: 700; color: white;
       transition: opacity 0.15s;
     }
     .submit-btn:disabled { opacity: 0.6; }
-    .submit-btn.expense { background: var(--red); }
-    .submit-btn.income { background: var(--green); }
+    .submit-btn.expense { background: var(--clay); }
+    .submit-btn.income { background: var(--forest); }
 
     /* ===== TRANSACTIONS ===== */
     .sticky-bar {
-      background: white; border-bottom: 1px solid var(--gray-200);
+      background: var(--bg); border-bottom: 1px solid var(--line);
       position: sticky; top: 0; z-index: 50;
     }
     .sticky-inner { max-width: 480px; margin: 0 auto; padding: 10px 16px; }
     .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .month-nav-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; }
-    .month-nav-btn svg { width: 20px; height: 20px; }
-    .month-label { font-size: 16px; font-weight: 600; color: var(--gray-800); text-transform: capitalize; }
-    .filter-tabs { display: flex; gap: 8px; }
+    .month-nav-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+    .month-nav-btn svg { width: 18px; height: 18px; }
+    .month-label { font-size: 15.5px; font-weight: 700; color: var(--ink); text-transform: capitalize; }
+    .filter-tabs { display: flex; gap: 8px; margin-bottom: 8px; }
     .filter-tab {
-      flex: 1; padding: 8px; border-radius: 10px; font-size: 13px; font-weight: 600;
-      background: var(--gray-100); color: var(--gray-500); text-align: center;
+      flex: 1; padding: 8px; border-radius: var(--r-sm); font-size: 12.5px; font-weight: 600;
+      background: var(--surface); border: 1px solid var(--line); color: var(--ink-soft); text-align: center;
       transition: all 0.15s;
     }
-    .filter-tab.active { background: var(--green); color: white; }
+    .filter-tab.active { background: var(--forest-deep); border-color: var(--forest-deep); color: white; }
+    .tx-search {
+      width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm);
+      padding: 9px 12px; font-size: 16px; outline: none;
+    }
+    .tx-search:focus { border-color: var(--forest); }
     .tx-page-content { max-width: 480px; margin: 0 auto; padding: 12px 16px; }
     .date-group { margin-bottom: 16px; }
-    .date-group-label { font-size: 12px; color: var(--gray-400); font-weight: 500; margin-bottom: 8px; text-transform: capitalize; }
-    .tx-delete-btn {
-      padding: 12px; color: var(--red);
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 10px; background: #fff5f5;
-    }
-    .tx-delete-btn svg { width: 18px; height: 18px; }
+    .date-group-label { font-size: 12px; color: var(--ink-faint); font-weight: 600; margin-bottom: 8px; text-transform: capitalize; }
 
     /* ===== REPORTS ===== */
     .period-pills {
-      display: flex; background: var(--green-dark); border-radius: 12px; padding: 3px; margin-top: 12px;
+      display: flex; background: rgba(0,0,0,0.18); border-radius: 12px; padding: 3px; margin-top: 14px;
     }
     .period-pill {
       flex: 1; padding: 8px; border-radius: 9px; font-size: 12px; font-weight: 700;
-      color: rgba(255,255,255,0.65); text-align: center; transition: all 0.15s;
+      color: rgba(255,255,255,0.6); text-align: center; transition: all 0.15s;
     }
-    .period-pill.active { background: white; color: var(--green-dark); }
+    .period-pill.active { background: white; color: var(--forest-deep); }
     .reports-content { max-width: 480px; margin: 0 auto; padding: 16px; }
     .report-stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
     .report-stat {
-      border-radius: 14px; padding: 12px 8px; text-align: center;
+      border-radius: var(--r-md); padding: 12px 8px; text-align: center; border: 1px solid var(--line); background: var(--surface);
     }
-    .report-stat svg { width: 20px; height: 20px; margin: 0 auto 4px; display: block; }
-    .report-stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--gray-500); }
-    .report-stat-value { font-size: 13px; font-weight: 700; margin-top: 2px; }
+    .report-stat svg { width: 18px; height: 18px; margin: 0 auto 5px; display: block; }
+    .report-stat-label { font-size: 10.5px; font-weight: 600; color: var(--ink-soft); }
+    .report-stat-value { font-size: 13px; font-weight: 700; margin-top: 3px; }
     .type-toggle-sm {
-      display: flex; background: var(--gray-100); border-radius: 12px; padding: 3px; margin-bottom: 16px;
+      display: flex; background: var(--surface-alt); border: 1px solid var(--line); border-radius: 12px; padding: 3px; margin-bottom: 16px;
     }
     .type-toggle-sm button {
       flex: 1; padding: 10px; border-radius: 9px; font-size: 13px; font-weight: 700;
-      color: var(--gray-400); transition: all 0.15s;
+      color: var(--ink-faint); transition: all 0.15s;
     }
-    .type-toggle-sm button.active { background: white; color: var(--green); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .type-toggle-sm button.active { background: var(--surface); color: var(--forest); border: 1px solid var(--line); }
     .pie-wrap {
-      background: white; border-radius: 16px; padding: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 12px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px;
     }
-    .pie-title { font-size: 12px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; margin-bottom: 12px; }
-    #pie-canvas { width: 100%; max-width: 200px; display: block; margin: 0 auto; }
-    .cat-report-list { background: white; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 12px; }
-    .cat-report-item { padding: 14px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-100); }
-    .cat-report-item:last-child { border-bottom: none; }
+    .pie-title { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin-bottom: 12px; }
+    #pie-canvas { width: 100%; max-width: 190px; display: block; margin: 0 auto; }
+    .cat-report-list.list-surface .cat-report-item:not(:last-child) { border-bottom: 1px solid var(--line); }
+    .cat-report-item { padding: 13px 14px; }
+    .cat-report-row { display: flex; align-items: center; gap: 12px; }
     .cat-report-info { flex: 1; min-width: 0; }
-    .cat-report-name { font-size: 14px; font-weight: 600; color: var(--gray-800); display: flex; justify-content: space-between; }
-    .cat-report-bar-wrap { margin-top: 5px; background: var(--gray-100); border-radius: 99px; height: 6px; }
-    .cat-report-bar { height: 6px; border-radius: 99px; }
-    .cat-report-pct { font-size: 10px; color: var(--gray-400); margin-top: 3px; }
+    .cat-report-name { font-size: 13.5px; font-weight: 600; color: var(--ink); display: flex; justify-content: space-between; }
+    .cat-report-bar-wrap { margin-top: 6px; background: var(--surface-alt); border-radius: 99px; height: 5px; }
+    .cat-report-bar { height: 5px; border-radius: 99px; }
+    .cat-report-pct { font-size: 10.5px; color: var(--ink-faint); margin-top: 4px; }
+    .cat-budget-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: 11px; color: var(--ink-soft); }
+    .cat-budget-track { background: var(--surface-alt); border-radius: 99px; height: 4px; margin-top: 4px; }
+    .cat-budget-fill { height: 4px; border-radius: 99px; }
     .download-btn {
-      width: 100%; background: var(--green); color: white; border-radius: 16px;
+      width: 100%; background: var(--forest-deep); color: white; border-radius: var(--r-md);
       padding: 14px 16px; display: flex; align-items: center; gap: 14px;
     }
     .download-btn-icon {
-      width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.2);
+      width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.14);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .download-btn-icon svg { width: 20px; height: 20px; }
+    .download-btn-icon svg { width: 19px; height: 19px; }
     .download-btn-text { text-align: left; }
-    .download-btn-title { font-size: 15px; font-weight: 700; }
-    .download-btn-sub { font-size: 12px; color: rgba(255,255,255,0.75); }
+    .download-btn-title { font-size: 14.5px; font-weight: 700; }
+    .download-btn-sub { font-size: 12px; color: rgba(255,255,255,0.65); }
 
     /* ===== SETTINGS ===== */
     .settings-content { max-width: 480px; margin: 0 auto; padding: 16px; }
     .settings-action-card {
-      border-radius: 16px; padding: 14px 16px;
+      border-radius: var(--r-md); padding: 14px 16px;
       display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+      background: var(--forest-deep); color: white;
     }
     .settings-action-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      width: 42px; height: 42px; border-radius: 11px;
+      background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .settings-action-icon svg { width: 22px; height: 22px; }
+    .settings-action-icon svg { width: 21px; height: 21px; }
     .settings-action-info { flex: 1; }
-    .settings-action-title { font-size: 15px; font-weight: 700; }
-    .settings-action-sub { font-size: 12px; opacity: 0.8; }
-    .settings-section-header { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; margin: 16px 0 8px; display: flex; align-items: center; gap: 6px; }
+    .settings-action-title { font-size: 14.5px; font-weight: 700; }
+    .settings-action-sub { font-size: 12px; opacity: 0.75; }
+
+    .theme-row { display: flex; background: var(--surface-alt); border: 1px solid var(--line); border-radius: var(--r-md); padding: 4px; margin-bottom: 20px; }
+    .theme-opt { flex: 1; padding: 10px; border-radius: var(--r-sm); font-size: 13px; font-weight: 600; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .theme-opt svg { width: 15px; height: 15px; }
+    .theme-opt.active { background: var(--surface); color: var(--forest); border: 1px solid var(--line); }
+
+    .settings-section-header { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin: 18px 0 8px; display: flex; align-items: center; gap: 6px; }
     .settings-section-header svg { width: 14px; height: 14px; }
-    .cat-list { background: white; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
-    .cat-list-item { padding: 12px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-100); }
-    .cat-list-item:last-child { border-bottom: none; }
-    .cat-list-info { flex: 1; }
-    .cat-list-name { font-size: 14px; font-weight: 600; color: var(--gray-800); }
-    .cat-list-badge { font-size: 10px; color: var(--gray-400); font-weight: 500; margin-top: 1px; }
-    .cat-list-btns { display: flex; gap: 4px; }
+    .cat-list-item { padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+    .cat-list-item:not(:last-child) { border-bottom: 1px solid var(--line); }
+    .cat-list-info { flex: 1; min-width: 0; }
+    .cat-list-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .cat-list-badge { font-size: 10.5px; color: var(--ink-faint); font-weight: 500; margin-top: 1px; }
+    .cat-list-btns { display: flex; gap: 4px; flex-shrink: 0; }
     .icon-btn {
-      width: 34px; height: 34px; border-radius: 10px;
+      width: 32px; height: 32px; border-radius: var(--r-sm);
       display: flex; align-items: center; justify-content: center;
     }
-    .icon-btn svg { width: 16px; height: 16px; }
-    .icon-btn.edit { background: #eff6ff; color: #3b82f6; }
-    .icon-btn.del { background: #fff5f5; color: var(--red); }
+    .icon-btn svg { width: 15px; height: 15px; }
+    .icon-btn.edit { background: var(--forest-soft); color: var(--forest); }
+    .icon-btn.del { background: var(--clay-soft); color: var(--clay); }
 
     /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      position: fixed; inset: 0; background: rgba(10,16,13,0.55);
       z-index: 200; display: flex; align-items: flex-end; justify-content: center;
       opacity: 0; pointer-events: none; transition: opacity 0.2s;
     }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
     .modal-sheet {
-      background: white; border-radius: 24px 24px 0 0;
+      background: var(--surface); border-radius: 24px 24px 0 0;
       width: 100%; max-width: 480px; padding: 0 20px calc(24px + var(--safe-bottom));
       transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
       max-height: 90vh; overflow-y: auto;
     }
     .modal-overlay.open .modal-sheet { transform: translateY(0); }
-    .modal-handle { width: 40px; height: 4px; background: var(--gray-200); border-radius: 99px; margin: 12px auto 20px; }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .modal-handle { width: 38px; height: 4px; background: var(--line-strong); border-radius: 99px; margin: 12px auto 20px; }
+    .modal-title { font-size: 17.5px; font-weight: 700; margin-bottom: 20px; }
     .modal-input {
-      width: 100%; border: 1px solid var(--gray-200); border-radius: 12px;
-      padding: 12px 14px; font-size: 15px; font-family: var(--font); outline: none; margin-bottom: 12px;
+      width: 100%; border: 1px solid var(--line); border-radius: var(--r-md);
+      padding: 12px 14px; font-size: 16px; font-family: var(--font); outline: none; margin-bottom: 12px;
+      background: var(--surface); color: var(--ink);
     }
-    .modal-input:focus { border-color: var(--green); }
-    .section-label { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; margin-bottom: 8px; }
+    .modal-input:focus { border-color: var(--forest); }
+    .section-label { font-size: 11.5px; font-weight: 700; color: var(--ink-faint); margin-bottom: 8px; }
     .icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 16px; }
     .icon-opt {
-      aspect-ratio: 1; border-radius: 10px; background: var(--gray-100);
+      aspect-ratio: 1; border-radius: var(--r-sm); background: var(--surface-alt);
       display: flex; align-items: center; justify-content: center; transition: all 0.1s;
     }
-    .icon-opt.selected { background: #dcfce7; outline: 2px solid var(--green); }
-    .icon-opt svg { width: 18px; height: 18px; color: var(--gray-500); }
-    .icon-opt.selected svg { color: var(--green-dark); }
-    .color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 20px; }
+    .icon-opt.selected { background: var(--forest-soft); outline: 2px solid var(--forest); }
+    .icon-opt svg { width: 18px; height: 18px; color: var(--ink-soft); }
+    .icon-opt.selected svg { color: var(--forest); }
+    .color-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 16px; }
     .color-opt { aspect-ratio: 1; border-radius: 50%; transition: all 0.1s; }
-    .color-opt.selected { outline: 3px solid var(--gray-400); outline-offset: 2px; }
+    .color-opt.selected { outline: 3px solid var(--ink-faint); outline-offset: 2px; }
     .modal-submit {
-      width: 100%; padding: 14px; border-radius: 14px; background: var(--green);
+      width: 100%; padding: 14px; border-radius: var(--r-md); background: var(--forest);
       color: white; font-size: 16px; font-weight: 700;
     }
     .modal-details { text-align: center; padding: 8px 0; }
     .modal-details-icon { margin: 0 auto 12px; }
-    .modal-details-amount { font-size: 36px; font-weight: 700; margin-bottom: 6px; }
-    .modal-details-desc { color: var(--gray-500); font-size: 15px; margin-bottom: 4px; }
-    .modal-details-date { color: var(--gray-400); font-size: 13px; margin-bottom: 20px; }
+    .modal-details-amount { font-size: 34px; font-weight: 600; margin-bottom: 6px; }
+    .modal-details-desc { color: var(--ink-soft); font-size: 15px; margin-bottom: 4px; }
+    .modal-details-date { color: var(--ink-faint); font-size: 13px; margin-bottom: 20px; }
     .modal-delete-btn {
-      width: 100%; padding: 14px; border-radius: 14px;
-      background: var(--red); color: white; font-size: 16px; font-weight: 700;
+      width: 100%; padding: 14px; border-radius: var(--r-md);
+      background: var(--clay); color: white; font-size: 16px; font-weight: 700;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .modal-delete-btn svg { width: 18px; height: 18px; }
@@ -389,42 +448,44 @@
     /* ===== IMPORT ===== */
     .import-content { max-width: 480px; margin: 0 auto; padding: 16px; }
     .import-card {
-      background: white; border-radius: 16px; padding: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 16px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; margin-bottom: 16px;
     }
     .import-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-    .import-card p { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; line-height: 1.5; }
+    .import-card p { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.5; }
     .file-input-btn {
-      width: 100%; padding: 14px; border-radius: 12px;
-      border: 2px dashed var(--gray-300); font-size: 15px; font-weight: 600;
-      color: var(--green); background: #f0fdf4; display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px; border-radius: var(--r-md);
+      border: 2px dashed var(--line-strong); font-size: 15px; font-weight: 600;
+      color: var(--forest); background: var(--forest-soft); display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .file-input-btn svg { width: 20px; height: 20px; }
-    .import-preview { background: var(--gray-50); border-radius: 12px; padding: 12px; margin-top: 12px; font-size: 13px; color: var(--gray-600); }
+    .import-preview { background: var(--surface-alt); border-radius: var(--r-sm); padding: 12px; margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
     .import-confirm-btn {
-      width: 100%; padding: 14px; border-radius: 12px;
-      background: var(--green); color: white; font-size: 15px; font-weight: 700; margin-top: 12px;
+      width: 100%; padding: 14px; border-radius: var(--r-md);
+      background: var(--forest); color: white; font-size: 15px; font-weight: 700; margin-top: 12px;
     }
 
     /* ===== TOAST ===== */
-    #toast-container { position: fixed; top: calc(var(--safe-top) + 12px); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    #toast-container { position: fixed; top: calc(var(--safe-top) + 12px); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 100%; max-width: 340px; padding: 0 16px; }
     .toast {
-      background: var(--gray-800); color: white; border-radius: 12px;
-      padding: 12px 20px; font-size: 14px; font-weight: 500;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2); white-space: nowrap;
+      background: var(--forest-deep); color: white; border-radius: var(--r-md);
+      padding: 12px 18px; font-size: 13.5px; font-weight: 500;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
       animation: toastIn 0.25s ease, toastOut 0.25s ease 2.75s forwards;
+      pointer-events: all;
     }
-    .toast.success { background: var(--green); }
-    .toast.error { background: var(--red); }
+    .toast.error { background: var(--clay); }
+    .toast.with-action { display: flex; align-items: center; justify-content: space-between; gap: 14px; animation: toastIn 0.25s ease; }
+    .toast.with-action button { background: rgba(255,255,255,0.16); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+    .toast.fading { animation: toastOut 0.2s ease forwards; }
     @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
     @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
 
     /* ===== UTILS ===== */
-    .text-green { color: var(--green); }
-    .text-red { color: var(--red); }
+    .text-green { color: var(--forest); }
+    .text-red { color: var(--clay); }
     .active-scale:active { transform: scale(0.97); }
-    .logo-footer { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 0; opacity: 0.35; }
-    .logo-footer span { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-500); }
+    .logo-footer { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 0; opacity: 0.4; }
+    .logo-footer span { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--ink-soft); }
   </style>
 </head>
 <body>
@@ -438,12 +499,12 @@
     <div class="modal-handle"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       <div class="modal-title" style="margin-bottom:0;">Dettaglio</div>
-      <button id="det-edit-toggle" onclick="toggleDetEdit()" style="background:var(--gray-100);color:var(--green);padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;">Modifica</button>
+      <button id="det-edit-toggle" onclick="toggleDetEdit()" style="background:var(--forest-soft);color:var(--forest);padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;">Modifica</button>
     </div>
     <!-- VIEW MODE -->
     <div id="det-view-mode" class="modal-details">
       <div class="modal-details-icon" id="det-icon"></div>
-      <div class="modal-details-amount" id="det-amount"></div>
+      <div class="modal-details-amount num" id="det-amount"></div>
       <div class="modal-details-desc" id="det-desc"></div>
       <div class="modal-details-date" id="det-date"></div>
       <button class="modal-delete-btn" id="det-delete-btn">
@@ -453,37 +514,37 @@
     </div>
     <!-- EDIT MODE -->
     <div id="det-edit-mode" style="display:none;">
-      <div style="display:flex;background:var(--gray-200);border-radius:14px;padding:4px;margin-bottom:14px;">
-        <button id="det-type-expense" onclick="setDetType('expense')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--gray-500);transition:all 0.15s;">
+      <div style="display:flex;background:var(--surface-alt);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:14px;">
+        <button id="det-type-expense" onclick="setDetType('expense')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-soft);transition:all 0.15s;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>Spesa
         </button>
-        <button id="det-type-income" onclick="setDetType('income')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--gray-500);transition:all 0.15s;">
+        <button id="det-type-income" onclick="setDetType('income')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-soft);transition:all 0.15s;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Entrata
         </button>
       </div>
-      <div style="background:white;border-radius:16px;padding:16px 20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:12px;">
-        <div style="font-size:12px;color:var(--gray-400);margin-bottom:4px;">Importo</div>
-        <div><span style="font-size:38px;font-weight:700;color:var(--gray-800);" id="det-edit-amount-display">0</span><span style="font-size:16px;color:var(--gray-400);margin-left:4px;">EUR</span></div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 20px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--ink-faint);margin-bottom:4px;">Importo</div>
+        <div><span class="num" style="font-size:36px;font-weight:600;color:var(--ink);" id="det-edit-amount-display">0</span><span style="font-size:16px;color:var(--ink-faint);margin-left:4px;">EUR</span></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('1')">1</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('2')">2</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('3')">3</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('4')">4</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('5')">5</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('6')">6</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('7')">7</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('8')">8</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('9')">9</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('.')">.</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);" onclick="detKeyPress('0')">0</button>
-        <button style="background:white;border-radius:12px;padding:13px;font-size:20px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.06);color:var(--red);" onclick="detKeyPress('C')">C</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('1')">1</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('2')">2</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('3')">3</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('4')">4</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('5')">5</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('6')">6</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('7')">7</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('8')">8</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('9')">9</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('.')">.</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;" onclick="detKeyPress('0')">0</button>
+        <button class="key-btn" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:19px;font-weight:600;color:var(--clay);" onclick="detKeyPress('C')">C</button>
       </div>
       <input class="modal-input" id="det-edit-desc" placeholder="Descrizione (opzionale)" style="margin-bottom:10px;" />
       <input class="modal-input" type="date" id="det-edit-date" style="margin-bottom:12px;" />
-      <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;">Categoria</div>
+      <div style="font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;">Categoria</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;" id="det-edit-cat-grid"></div>
-      <button id="det-save-btn" onclick="saveTxEdit()" style="width:100%;padding:14px;border-radius:14px;background:var(--green);color:white;font-size:16px;font-weight:700;">Salva modifiche</button>
+      <button id="det-save-btn" onclick="saveTxEdit()" style="width:100%;padding:14px;border-radius:14px;background:var(--forest);color:white;font-size:16px;font-weight:700;">Salva modifiche</button>
     </div>
   </div>
 </div>
@@ -495,8 +556,11 @@
     <div class="modal-title" id="modal-cat-title">Nuova Categoria</div>
     <input class="modal-input" id="cat-name-input" placeholder="Nome categoria" />
     <div id="cat-type-row" style="display:flex;gap:8px;margin-bottom:16px;">
-      <button id="cat-type-expense" onclick="setCatType('expense')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:white;border:2px solid var(--red);color:var(--red);">Spesa</button>
-      <button id="cat-type-income" onclick="setCatType('income')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:var(--gray-100);border:2px solid transparent;color:var(--gray-400);">Entrata</button>
+      <button id="cat-type-expense" onclick="setCatType('expense')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:var(--surface);border:2px solid var(--clay);color:var(--clay);">Spesa</button>
+      <button id="cat-type-income" onclick="setCatType('income')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:var(--surface-alt);border:2px solid transparent;color:var(--ink-faint);">Entrata</button>
+    </div>
+    <div id="cat-budget-row" style="margin-bottom:4px;">
+      <input class="modal-input" id="cat-budget-input" type="number" inputmode="decimal" min="0" step="1" placeholder="Budget mensile in € (opzionale)" />
     </div>
     <div class="section-label">Icona</div>
     <div class="icon-grid" id="icon-grid"></div>
@@ -520,11 +584,15 @@
 <div class="page active" id="page-home">
   <div id="home-header">
     <div class="home-header-inner">
-      <div class="home-month" id="home-month"></div>
-      <div class="home-greeting">Ciao, Mattia 👋</div>
+      <div class="home-top-row">
+        <div>
+          <div class="home-month" id="home-month"></div>
+          <div class="home-greeting">Ciao, Mattia</div>
+        </div>
+      </div>
       <div class="balance-card">
-        <div class="balance-label">Bilancio Mensile</div>
-        <div class="balance-amount" id="home-balance">€0,00</div>
+        <div class="balance-label">Bilancio del mese</div>
+        <div class="balance-amount num" id="home-balance">€0,00</div>
       </div>
     </div>
   </div>
@@ -532,29 +600,29 @@
     <div class="stat-cards">
       <div class="stat-card">
         <div class="stat-card-row">
-          <div class="stat-icon" style="background:#dcfce7;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <div class="stat-icon" style="background:var(--forest-soft);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </div>
           <span class="stat-label">Entrate</span>
         </div>
-        <div class="stat-value text-green" id="home-income">€0,00</div>
+        <div class="stat-value text-green num" id="home-income">€0,00</div>
       </div>
       <div class="stat-card">
         <div class="stat-card-row">
-          <div class="stat-icon" style="background:#fee2e2;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+          <div class="stat-icon" style="background:var(--clay-soft);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
           </div>
           <span class="stat-label">Uscite</span>
         </div>
-        <div class="stat-value text-red" id="home-expense">€0,00</div>
+        <div class="stat-value text-red num" id="home-expense">€0,00</div>
       </div>
     </div>
     <div class="quick-btns">
-      <button class="quick-btn active-scale" style="background:#ef4444;" onclick="navigate('add','expense')">
+      <button class="quick-btn expense active-scale" onclick="navigate('add','expense')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
         Spesa
       </button>
-      <button class="quick-btn active-scale" style="background:#16a34a;" onclick="navigate('add','income')">
+      <button class="quick-btn income active-scale" onclick="navigate('add','income')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         Entrata
       </button>
@@ -563,24 +631,24 @@
       <div class="section-header">
         <div class="section-title">Categorie principali</div>
         <button class="section-link" onclick="navigate('reports')">
-          Vedi tutto
+          Report
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-      <div class="tx-list" id="home-cats-list"></div>
+      <div class="list-surface" id="home-cats-list"></div>
     </div>
     <div>
       <div class="section-header">
         <div class="section-title">Movimenti recenti</div>
         <button class="section-link" onclick="navigate('transactions')">
-          Vedi tutti
+          Tutti
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-      <div class="tx-list" id="home-tx-list"></div>
+      <div class="tx-list list-surface" id="home-tx-list"></div>
     </div>
     <div class="logo-footer">
-      <span>CashFlow</span>
+      <span>CASHFLOW</span>
     </div>
   </div>
 </div>
@@ -610,28 +678,28 @@
     </div>
     <div class="amount-display">
       <div class="amount-label">Importo</div>
-      <div><span class="amount-value" id="add-amount-display">0</span><span class="amount-currency">EUR</span></div>
+      <div><span class="amount-value num" id="add-amount-display">0</span><span class="amount-currency">EUR</span></div>
     </div>
-    <div style="background:white;border-radius:16px;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:14px;" id="calc-display-wrap">
-      <div style="text-align:right;font-size:12px;color:var(--gray-400);min-height:18px;margin-bottom:2px;" id="calc-expr-display"></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:14px;" id="calc-display-wrap">
+      <div class="num" style="text-align:right;font-size:12px;color:var(--ink-faint);min-height:18px;margin-bottom:2px;" id="calc-expr-display"></div>
     </div>
     <div class="keypad" style="grid-template-columns:repeat(4,1fr);">
       <button class="key-btn" onclick="keyPress('7')">7</button>
       <button class="key-btn" onclick="keyPress('8')">8</button>
       <button class="key-btn" onclick="keyPress('9')">9</button>
-      <button class="key-btn" onclick="keyPress('+')" style="color:var(--green);font-size:24px;">+</button>
+      <button class="key-btn" onclick="keyPress('+')" style="color:var(--forest);font-size:24px;">+</button>
       <button class="key-btn" onclick="keyPress('4')">4</button>
       <button class="key-btn" onclick="keyPress('5')">5</button>
       <button class="key-btn" onclick="keyPress('6')">6</button>
-      <button class="key-btn" onclick="keyPress('-')" style="color:var(--green);font-size:28px;">−</button>
+      <button class="key-btn" onclick="keyPress('-')" style="color:var(--forest);font-size:28px;">−</button>
       <button class="key-btn" onclick="keyPress('1')">1</button>
       <button class="key-btn" onclick="keyPress('2')">2</button>
       <button class="key-btn" onclick="keyPress('3')">3</button>
-      <button class="key-btn" onclick="keyPress('*')" style="color:var(--green);font-size:24px;">×</button>
+      <button class="key-btn" onclick="keyPress('*')" style="color:var(--forest);font-size:24px;">×</button>
       <button class="key-btn" onclick="keyPress('.')">.</button>
       <button class="key-btn" onclick="keyPress('0')">0</button>
-      <button class="key-btn" onclick="keyPress('=')" style="background:var(--green);color:white;font-size:22px;">=</button>
-      <button class="key-btn" onclick="keyPress('C')" style="color:var(--red);font-size:16px;font-weight:700;">C</button>
+      <button class="key-btn" onclick="keyPress('=')" style="background:var(--forest);border-color:var(--forest);color:white;font-size:21px;">=</button>
+      <button class="key-btn" onclick="keyPress('C')" style="color:var(--clay);font-size:16px;font-weight:700;">C</button>
     </div>
     <input class="input-field" id="add-desc" placeholder="Descrizione (opzionale)" />
     <input class="input-field" type="date" id="add-date" />
@@ -669,6 +737,7 @@
         <button class="filter-tab" id="tx-filter-expense" onclick="setTxFilter('expense')">Uscite</button>
         <button class="filter-tab" id="tx-filter-income" onclick="setTxFilter('income')">Entrate</button>
       </div>
+      <input class="tx-search" id="tx-search-input" placeholder="Cerca per descrizione o categoria" oninput="renderTransactions()" />
     </div>
   </div>
   <div class="tx-page-content" id="tx-list-container"></div>
@@ -703,20 +772,20 @@
   </div>
   <div class="reports-content">
     <div class="report-stat-cards">
-      <div class="report-stat" style="background:#dcfce7;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <div class="report-stat">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         <div class="report-stat-label">Entrate</div>
-        <div class="report-stat-value text-green" id="rep-income">€0</div>
+        <div class="report-stat-value text-green num" id="rep-income">€0</div>
       </div>
-      <div class="report-stat" style="background:#fee2e2;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+      <div class="report-stat">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
         <div class="report-stat-label">Uscite</div>
-        <div class="report-stat-value text-red" id="rep-expense">€0</div>
+        <div class="report-stat-value text-red num" id="rep-expense">€0</div>
       </div>
-      <div class="report-stat" style="background:#eff6ff;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      <div class="report-stat">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
         <div class="report-stat-label">Bilancio</div>
-        <div class="report-stat-value" id="rep-balance">€0</div>
+        <div class="report-stat-value num" id="rep-balance">€0</div>
       </div>
     </div>
     <div class="type-toggle-sm">
@@ -725,9 +794,9 @@
     </div>
     <div class="pie-wrap" id="rep-pie-wrap">
       <div class="pie-title">Distribuzione</div>
-      <canvas id="pie-canvas" height="200"></canvas>
+      <canvas id="pie-canvas" height="190"></canvas>
     </div>
-    <div class="cat-report-list" id="rep-cat-list"></div>
+    <div class="cat-report-list list-surface" id="rep-cat-list"></div>
     <div style="height:12px;"></div>
     <button class="download-btn" onclick="downloadCSV()">
       <div class="download-btn-icon">
@@ -738,7 +807,7 @@
         <div class="download-btn-sub" id="rep-csv-sub">Esporta tutto</div>
       </div>
     </button>
-    <div class="logo-footer"><span>CashFlow</span></div>
+    <div class="logo-footer"><span>CASHFLOW</span></div>
   </div>
 </div>
 
@@ -755,7 +824,22 @@
     </div>
   </div>
   <div class="settings-content">
-    <button class="settings-action-card active-scale" style="background:#3b82f6;color:white;width:100%;text-align:left;" onclick="navigate('import')">
+    <div class="theme-row" id="theme-row">
+      <button class="theme-opt" id="theme-light" onclick="setTheme('light')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        Chiaro
+      </button>
+      <button class="theme-opt" id="theme-dark" onclick="setTheme('dark')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        Scuro
+      </button>
+      <button class="theme-opt" id="theme-system" onclick="setTheme('system')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Sistema
+      </button>
+    </div>
+
+    <button class="settings-action-card active-scale" style="width:100%;text-align:left;" onclick="navigate('import')">
       <div class="settings-action-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       </div>
@@ -767,7 +851,7 @@
     </button>
 
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-      <button style="background:var(--green);color:white;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;" onclick="openCreateCat()">
+      <button style="background:var(--forest);color:white;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;" onclick="openCreateCat()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nuova Categoria
       </button>
@@ -777,26 +861,26 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
       Spese
     </div>
-    <div class="cat-list" id="settings-expense-list"></div>
+    <div class="list-surface" id="settings-expense-list"></div>
 
-    <div class="settings-section-header" style="margin-top:20px;">
+    <div class="settings-section-header">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
       Entrate
     </div>
-    <div class="cat-list" id="settings-income-list"></div>
+    <div class="list-surface" id="settings-income-list"></div>
 
     <!-- Danger zone -->
-    <div style="margin-top:24px;background:white;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden;">
-      <button style="width:100%;padding:16px;display:flex;align-items:center;gap:12px;color:var(--red);" onclick="resetAllData()">
+    <div style="margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;">
+      <button style="width:100%;padding:16px;display:flex;align-items:center;gap:12px;color:var(--clay);" onclick="resetAllData()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
         <div style="text-align:left;">
           <div style="font-size:14px;font-weight:700;">Elimina tutti i dati</div>
-          <div style="font-size:12px;color:var(--gray-400);">Ripristina l'app allo stato iniziale</div>
+          <div style="font-size:12px;color:var(--ink-faint);">Riporta l'app allo stato iniziale</div>
         </div>
       </button>
     </div>
 
-    <div class="logo-footer"><span>CashFlow</span></div>
+    <div class="logo-footer"><span>CASHFLOW</span></div>
   </div>
 </div>
 
@@ -824,7 +908,7 @@
       <div id="import-preview" style="display:none;" class="import-preview"></div>
       <button id="import-confirm-btn" style="display:none;" class="import-confirm-btn" onclick="doImport()">Importa transazioni</button>
     </div>
-    <div class="logo-footer"><span>CashFlow</span></div>
+    <div class="logo-footer"><span>CASHFLOW</span></div>
   </div>
 </div>
 
@@ -857,6 +941,31 @@
 
 <script>
 // ============================
+// THEME
+// ============================
+const THEME_KEY = 'cf_theme';
+function applyTheme(pref) {
+  const isDark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('meta-theme-color').setAttribute('content', isDark ? '#0C2018' : '#123324');
+  ['light','dark','system'].forEach(k => {
+    const el = document.getElementById('theme-'+k);
+    if (el) el.classList.toggle('active', k === pref);
+  });
+}
+function setTheme(pref) {
+  localStorage.setItem(THEME_KEY, pref);
+  applyTheme(pref);
+}
+(function initTheme() {
+  const pref = localStorage.getItem(THEME_KEY) || 'system';
+  applyTheme(pref);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if ((localStorage.getItem(THEME_KEY) || 'system') === 'system') applyTheme('system');
+  });
+})();
+
+// ============================
 // DATA LAYER — localStorage
 // ============================
 const STORAGE_KEYS = { transactions: 'cf_transactions', categories: 'cf_categories' };
@@ -868,7 +977,7 @@ function saveData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// Default categories (same as original)
+// Default categories (same as original — ids preserved for compatibility with existing data)
 const DEFAULT_CATS = [
   { id: 1, name:'Spesa', icon:'shopping-cart', color:'#f97316', type:'expense', isDefault:true },
   { id: 2, name:'Ristorante', icon:'utensils', color:'#f59e0b', type:'expense', isDefault:true },
@@ -894,6 +1003,8 @@ const DEFAULT_CATS = [
   { id: 22, name:'Depositi', icon:'landmark', color:'#3b82f6', type:'income', isDefault:true },
   { id: 23, name:'Regali', icon:'gift', color:'#f59e0b', type:'income', isDefault:true },
   { id: 24, name:'Altre Entrate', icon:'plus-circle', color:'#84cc16', type:'income', isDefault:true },
+  { id: 25, name:'Acquisti', icon:'shopping-bag', color:'#22c55e', type:'expense', isDefault:true },
+  { id: 26, name:'Viaggi', icon:'plane', color:'#0ea5e9', type:'expense', isDefault:true },
 ];
 
 function getCategories() {
@@ -908,6 +1019,21 @@ function saveTransactions(txs) { saveData(STORAGE_KEYS.transactions, txs); }
 
 function nextId(arr) {
   return arr.length === 0 ? 1 : Math.max(...arr.map(x => x.id)) + 1;
+}
+
+// Sort categories with most-recently-used first (falls back to A-Z for unused ones)
+function sortedCatsForType(type) {
+  const cats = getCategories().filter(c => c.type === type);
+  const txs = getTransactions();
+  const lastUsed = {};
+  txs.forEach(t => { if (!lastUsed[t.categoryId] || t.date > lastUsed[t.categoryId]) lastUsed[t.categoryId] = t.date; });
+  return cats.slice().sort((a,b) => {
+    const la = lastUsed[a.id], lb = lastUsed[b.id];
+    if (la && lb) return lb.localeCompare(la);
+    if (la && !lb) return -1;
+    if (!la && lb) return 1;
+    return a.name.localeCompare(b.name, 'it');
+  });
 }
 
 // ============================
@@ -1015,7 +1141,6 @@ function navigate(page, extra) {
   if (page === 'transactions') renderTransactions();
   if (page === 'reports') renderReports();
   if (page === 'settings') renderSettings();
-  if (page === 'import') {};
   window.scrollTo(0,0);
 }
 
@@ -1029,10 +1154,38 @@ function toast(msg, type = 'success') {
   document.getElementById('toast-container').appendChild(el);
   setTimeout(() => el.remove(), 3200);
 }
+function toastAction(msg, actionLabel, onAction) {
+  const el = document.createElement('div');
+  el.className = 'toast with-action';
+  const span = document.createElement('span');
+  span.textContent = msg;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = actionLabel;
+  btn.onclick = () => { onAction(); el.remove(); };
+  el.appendChild(span);
+  el.appendChild(btn);
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => { el.classList.add('fading'); setTimeout(() => el.remove(), 220); }, 4000);
+}
 
 // ============================
 // HOME
 // ============================
+function animateNumber(el, to, prefix) {
+  const from = 0;
+  const start = performance.now();
+  const dur = 500;
+  function step(now) {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmtEur(from + (to - from) * eased);
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = fmtEur(to);
+  }
+  requestAnimationFrame(step);
+}
+
 function renderHome() {
   const now = new Date();
   document.getElementById('home-month').textContent = `${MONTHS_IT[now.getMonth()]} ${now.getFullYear()}`;
@@ -1043,7 +1196,7 @@ function renderHome() {
   let income = 0, expense = 0;
   monthTxs.forEach(t => { if(t.type==='income') income += t.amount; else expense += t.amount; });
   const balance = income - expense;
-  document.getElementById('home-balance').textContent = fmtEur(balance);
+  animateNumber(document.getElementById('home-balance'), balance);
   document.getElementById('home-income').textContent = fmtEur(income);
   document.getElementById('home-expense').textContent = fmtEur(expense);
 
@@ -1068,7 +1221,7 @@ function renderHome() {
           <div class="cat-bar-name">${cat.name}</div>
           <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct}%;background:${cat.color};"></div></div>
         </div>
-        <div class="cat-bar-amount">${fmtEur(total)}</div>
+        <div class="cat-bar-amount num">${fmtEur(total)}</div>
       </div>`;
     }).join('');
   }
@@ -1077,17 +1230,17 @@ function renderHome() {
   const recent = [...monthTxs].sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
   const txEl = document.getElementById('home-tx-list');
   if (recent.length === 0) {
-    txEl.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg><p>Nessuna transazione questo mese</p></div>`;
+    txEl.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg><p>Ancora nessun movimento questo mese.<br>Aggiungine uno con il pulsante +.</p></div>`;
   } else {
     txEl.innerHTML = recent.map(tx => {
       const cat = cats.find(c => c.id === tx.categoryId) || { name:'?', icon:'circle', color:'#6b7280' };
-      return `<div class="tx-item">
+      return `<div class="tx-item" style="cursor:pointer;" onclick="openTxDetail(${tx.id})">
         ${categoryIconHtml(cat.icon, cat.color, 16)}
         <div class="tx-info">
           <div class="tx-name">${tx.description || cat.name}</div>
           <div class="tx-date">${fmtDateShort(tx.date)}</div>
         </div>
-        <div class="tx-amount ${tx.type}">${tx.type==='income'?'+':'-'}${fmtEur(tx.amount)}</div>
+        <div class="tx-amount num ${tx.type}">${tx.type==='income'?'+':'-'}${fmtEur(tx.amount)}</div>
       </div>`;
     }).join('');
   }
@@ -1128,7 +1281,7 @@ function updateAddTypeUI() {
 }
 
 function renderAddCats() {
-  const cats = getCategories().filter(c => c.type === addType).sort((a,b) => a.name.localeCompare(b.name,'it'));
+  const cats = sortedCatsForType(addType);
   document.getElementById('add-cat-grid').innerHTML = cats.map(cat => {
     const sel = addCategoryId === cat.id;
     const selClass = sel ? (addType==='expense' ? ' selected-expense' : ' selected-income') : '';
@@ -1150,7 +1303,13 @@ let calcOp = '';
 let calcRight = '';
 let calcJustEvaled = false;
 
+function haptic(ms = 10) {
+  // Vibration API: supported on Android browsers, NOT available to web pages on iOS/Safari (Apple platform restriction, even for installed PWAs).
+  if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
+}
+
 function keyPress(k) {
+  haptic();
   if (k === 'C') {
     calcLeft = ''; calcOp = ''; calcRight = ''; calcJustEvaled = false;
     addAmount = '';
@@ -1232,6 +1391,7 @@ function submitTransaction() {
 // ============================
 let txMonth = new Date();
 let txFilter = 'all';
+let lastDeletedTx = null;
 
 function txChangeMonth(dir) {
   txMonth = new Date(txMonth.getFullYear(), txMonth.getMonth() + dir, 1);
@@ -1250,11 +1410,19 @@ function renderTransactions() {
   const { from, to } = monthRange(txMonth.getFullYear(), txMonth.getMonth());
   let txs = getTransactions().filter(t => t.date >= from && t.date <= to);
   if (txFilter !== 'all') txs = txs.filter(t => t.type === txFilter);
-  txs.sort((a,b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
   const cats = getCategories();
+  const query = (document.getElementById('tx-search-input').value || '').trim().toLowerCase();
+  if (query) {
+    txs = txs.filter(t => {
+      const cat = cats.find(c => c.id === t.categoryId);
+      const hay = ((t.description||'') + ' ' + (cat ? cat.name : '')).toLowerCase();
+      return hay.includes(query);
+    });
+  }
+  txs.sort((a,b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
   const container = document.getElementById('tx-list-container');
   if (txs.length === 0) {
-    container.innerHTML = `<div class="empty-state" style="margin-top:20px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg><p>Nessun movimento trovato</p></div>`;
+    container.innerHTML = `<div class="empty-state" style="margin-top:20px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg><p>Nessun movimento trovato per questi filtri.</p></div>`;
     return;
   }
   // Group by date
@@ -1263,21 +1431,103 @@ function renderTransactions() {
   container.innerHTML = Object.entries(grouped).map(([date, dayTxs]) => `
     <div class="date-group">
       <div class="date-group-label">${fmtDateFull(date)}</div>
-      <div class="tx-list">
+      <div class="tx-list list-surface">
         ${dayTxs.map(tx => {
           const cat = cats.find(c => c.id === tx.categoryId) || { name:'?', icon:'circle', color:'#6b7280' };
-          return `<div class="tx-item" style="cursor:pointer;" onclick="openTxDetail(${tx.id})">
-            ${categoryIconHtml(cat.icon, cat.color, 16)}
-            <div class="tx-info">
-              <div class="tx-name">${tx.description || cat.name}</div>
-              <div class="tx-date">${cat.name}</div>
+          return `<div class="tx-swipe" data-txid="${tx.id}">
+            <div class="tx-swipe-action" onclick="swipeDeleteTx(${tx.id})">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              Elimina
             </div>
-            <div class="tx-amount ${tx.type}">${tx.type==='income'?'+':'-'}${fmtEur(tx.amount)}</div>
+            <div class="tx-item" onclick="handleTxTap(event, ${tx.id})">
+              ${categoryIconHtml(cat.icon, cat.color, 16)}
+              <div class="tx-info">
+                <div class="tx-name">${tx.description || cat.name}</div>
+                <div class="tx-date">${cat.name}</div>
+              </div>
+              <div class="tx-amount num ${tx.type}">${tx.type==='income'?'+':'-'}${fmtEur(tx.amount)}</div>
+            </div>
           </div>`;
         }).join('')}
       </div>
     </div>
   `).join('');
+  initSwipeContainer(container);
+}
+
+// ---- swipe-to-delete with undo ----
+let swipeActive = null;
+let justDragged = false;
+
+function initSwipeContainer(container) {
+  container.onpointerdown = (e) => {
+    const wrap = e.target.closest('.tx-swipe');
+    if (!wrap) return;
+    const item = wrap.querySelector('.tx-item');
+    container.querySelectorAll('.tx-item.swiped').forEach(el => {
+      if (el !== item) { el.classList.remove('swiped'); el.style.transform = ''; }
+    });
+    swipeActive = { item, startX: e.clientX, startY: e.clientY, dx: 0, dragging: false, moved: false };
+  };
+  container.onpointermove = (e) => {
+    if (!swipeActive) return;
+    const dx = e.clientX - swipeActive.startX;
+    const dy = e.clientY - swipeActive.startY;
+    if (!swipeActive.dragging) {
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) swipeActive.dragging = true;
+      else if (Math.abs(dy) > 8) { swipeActive = null; return; }
+      else return;
+    }
+    swipeActive.moved = true;
+    const base = swipeActive.item.classList.contains('swiped') ? -88 : 0;
+    let t = Math.max(-96, Math.min(0, base + dx));
+    swipeActive.item.style.transition = 'none';
+    swipeActive.item.style.transform = `translateX(${t}px)`;
+    swipeActive.dx = t;
+  };
+  const endDrag = () => {
+    if (!swipeActive) return;
+    swipeActive.item.style.transition = '';
+    if (swipeActive.dragging) {
+      if (swipeActive.dx < -44) { swipeActive.item.style.transform = 'translateX(-88px)'; swipeActive.item.classList.add('swiped'); }
+      else { swipeActive.item.style.transform = ''; swipeActive.item.classList.remove('swiped'); }
+      if (swipeActive.moved) { justDragged = true; setTimeout(() => { justDragged = false; }, 60); }
+    }
+    swipeActive = null;
+  };
+  container.onpointerup = endDrag;
+  container.onpointercancel = endDrag;
+}
+
+function handleTxTap(e, id) {
+  if (justDragged) return;
+  const item = e.currentTarget;
+  if (item.classList.contains('swiped')) {
+    item.classList.remove('swiped');
+    item.style.transform = '';
+    return;
+  }
+  openTxDetail(id);
+}
+
+function swipeDeleteTx(id) {
+  const txs = getTransactions();
+  const idx = txs.findIndex(t => t.id === id);
+  if (idx < 0) return;
+  const [removed] = txs.splice(idx, 1);
+  saveTransactions(txs);
+  lastDeletedTx = removed;
+  renderTransactions();
+  if (currentPage === 'home') renderHome();
+  toastAction('Movimento eliminato', 'Annulla', () => {
+    if (!lastDeletedTx) return;
+    const t2 = getTransactions();
+    t2.push(lastDeletedTx);
+    saveTransactions(t2);
+    lastDeletedTx = null;
+    renderTransactions();
+    if (currentPage === 'home') renderHome();
+  });
 }
 
 let detailTxId = null;
@@ -1290,14 +1540,14 @@ function openTxDetail(id) {
   const cat = cats.find(c => c.id === tx.categoryId) || { name:'?', icon:'circle', color:'#6b7280' };
   document.getElementById('det-icon').innerHTML = categoryIconHtml(cat.icon, cat.color, 28);
   document.getElementById('det-amount').textContent = (tx.type==='income'?'+':'-') + fmtEur(tx.amount);
-  document.getElementById('det-amount').style.color = tx.type==='income' ? 'var(--green)' : 'var(--red)';
+  document.getElementById('det-amount').style.color = tx.type==='income' ? 'var(--forest)' : 'var(--clay)';
   document.getElementById('det-desc').textContent = tx.description || cat.name;
   document.getElementById('det-date').textContent = fmtDate(tx.date);
   // Reset to view mode
   document.getElementById('det-view-mode').style.display = 'block';
   document.getElementById('det-edit-mode').style.display = 'none';
   const etBtn = document.getElementById('det-edit-toggle');
-  etBtn.textContent = 'Modifica'; etBtn.style.color = 'var(--green)';
+  etBtn.textContent = 'Modifica'; etBtn.style.color = 'var(--forest)';
   openModal('modal-details');
 }
 
@@ -1307,7 +1557,7 @@ document.getElementById('det-delete-btn').onclick = function() {
   txs = txs.filter(t => t.id !== detailTxId);
   saveTransactions(txs);
   closeModal('modal-details');
-  toast('Transazione eliminata');
+  toast('Movimento eliminato');
   renderTransactions();
   if (currentPage === 'home') renderHome();
 };
@@ -1326,7 +1576,7 @@ function toggleDetEdit() {
     viewMode.style.display = 'none';
     editMode.style.display = 'block';
     btn.textContent = 'Annulla';
-    btn.style.color = 'var(--red)';
+    btn.style.color = 'var(--clay)';
     // Pre-fill from current tx
     const txs = getTransactions();
     const tx = txs.find(t => t.id === detailTxId);
@@ -1344,7 +1594,7 @@ function toggleDetEdit() {
     viewMode.style.display = 'block';
     editMode.style.display = 'none';
     btn.textContent = 'Modifica';
-    btn.style.color = 'var(--green)';
+    btn.style.color = 'var(--forest)';
   }
 }
 
@@ -1359,18 +1609,18 @@ function updateDetTypeUI() {
   const eBtn = document.getElementById('det-type-expense');
   const iBtn = document.getElementById('det-type-income');
   if (detEditType === 'expense') {
-    eBtn.style.background = 'var(--red)'; eBtn.style.color = 'white'; eBtn.style.boxShadow = '0 2px 6px rgba(239,68,68,0.3)';
-    iBtn.style.background = 'transparent'; iBtn.style.color = 'var(--gray-500)'; iBtn.style.boxShadow = 'none';
+    eBtn.style.background = 'var(--clay)'; eBtn.style.color = 'white';
+    iBtn.style.background = 'transparent'; iBtn.style.color = 'var(--ink-soft)';
   } else {
-    iBtn.style.background = 'var(--green)'; iBtn.style.color = 'white'; iBtn.style.boxShadow = '0 2px 6px rgba(34,197,94,0.3)';
-    eBtn.style.background = 'transparent'; eBtn.style.color = 'var(--gray-500)'; eBtn.style.boxShadow = 'none';
+    iBtn.style.background = 'var(--forest)'; iBtn.style.color = 'white';
+    eBtn.style.background = 'transparent'; eBtn.style.color = 'var(--ink-soft)';
   }
   const saveBtn = document.getElementById('det-save-btn');
-  if (saveBtn) saveBtn.style.background = detEditType === 'expense' ? 'var(--red)' : 'var(--green)';
+  if (saveBtn) saveBtn.style.background = detEditType === 'expense' ? 'var(--clay)' : 'var(--forest)';
 }
 
 function renderDetEditCats() {
-  const cats = getCategories().filter(c => c.type === detEditType).sort((a,b) => a.name.localeCompare(b.name,'it'));
+  const cats = sortedCatsForType(detEditType);
   document.getElementById('det-edit-cat-grid').innerHTML = cats.map(cat => {
     const sel = detEditCatId === cat.id;
     const selClass = sel ? (detEditType==='expense' ? ' selected-expense' : ' selected-income') : '';
@@ -1387,6 +1637,7 @@ function selectDetCat(id) {
 }
 
 function detKeyPress(k) {
+  haptic();
   if (k === 'C') { detEditAmount = ''; }
   else if (k === '.') {
     if (detEditAmount.includes('.')) return;
@@ -1476,7 +1727,7 @@ function renderReports() {
   document.getElementById('rep-expense').textContent = fmtEur(expense);
   const repBal = document.getElementById('rep-balance');
   repBal.textContent = fmtEur(balance);
-  repBal.style.color = balance >= 0 ? 'var(--green)' : 'var(--red)';
+  repBal.style.color = balance >= 0 ? 'var(--forest)' : 'var(--clay)';
   document.getElementById('rep-csv-sub').textContent = `${txs.length} transazioni`;
 
   // Category breakdown
@@ -1488,6 +1739,7 @@ function renderReports() {
     return { ...cat, total };
   }).sort((a,b) => b.total-a.total);
   const totalAmt = catData.reduce((s,c) => s+c.total, 0);
+  const showBudgets = repType === 'expense' && repPeriod === 'month';
 
   // Pie chart
   drawPie(catData);
@@ -1495,19 +1747,35 @@ function renderReports() {
   // List
   const listEl = document.getElementById('rep-cat-list');
   if (catData.length === 0) {
-    listEl.innerHTML = `<div class="empty-state" style="padding:32px 20px;"><p>Nessun dato per questo periodo</p></div>`;
+    listEl.innerHTML = `<div class="empty-state" style="padding:32px 20px;"><p>Nessun dato per questo periodo.</p></div>`;
     document.getElementById('rep-pie-wrap').style.display = 'none';
   } else {
     document.getElementById('rep-pie-wrap').style.display = '';
     listEl.innerHTML = catData.map(cat => {
       const pct = totalAmt > 0 ? (cat.total/totalAmt)*100 : 0;
+      let budgetHtml = '';
+      if (showBudgets && cat.budget) {
+        const bPct = Math.min(100, (cat.total / cat.budget) * 100);
+        const over = cat.total > cat.budget;
+        const barColor = over ? 'var(--clay)' : (bPct > 80 ? 'var(--gold)' : 'var(--forest)');
+        budgetHtml = `<div class="cat-budget-row">
+          <div style="display:flex;justify-content:space-between;">
+            <span>Budget mensile</span>
+            <span style="color:${barColor};font-weight:700;">${fmtEur(cat.total)} / ${fmtEur(cat.budget)}</span>
+          </div>
+          <div class="cat-budget-track"><div class="cat-budget-fill" style="width:${bPct}%;background:${barColor};"></div></div>
+        </div>`;
+      }
       return `<div class="cat-report-item">
-        ${categoryIconHtml(cat.icon, cat.color, 18)}
-        <div class="cat-report-info">
-          <div class="cat-report-name"><span>${cat.name}</span><span style="font-size:14px;font-weight:700;">${fmtEur(cat.total)}</span></div>
-          <div class="cat-report-bar-wrap"><div class="cat-report-bar" style="width:${pct}%;background:${cat.color};"></div></div>
-          <div class="cat-report-pct">${pct.toFixed(1)}%</div>
+        <div class="cat-report-row">
+          ${categoryIconHtml(cat.icon, cat.color, 18)}
+          <div class="cat-report-info">
+            <div class="cat-report-name"><span>${cat.name}</span><span class="num" style="font-size:14px;font-weight:700;">${fmtEur(cat.total)}</span></div>
+            <div class="cat-report-bar-wrap"><div class="cat-report-bar" style="width:${pct}%;background:${cat.color};"></div></div>
+            <div class="cat-report-pct">${pct.toFixed(1)}%</div>
+          </div>
         </div>
+        ${budgetHtml}
       </div>`;
     }).join('');
   }
@@ -1517,12 +1785,13 @@ function drawPie(data) {
   const canvas = document.getElementById('pie-canvas');
   if (!canvas.getContext) return;
   const ctx = canvas.getContext('2d');
-  const size = Math.min(canvas.offsetWidth || 200, 200);
+  const size = Math.min(canvas.offsetWidth || 190, 190);
   canvas.width = size; canvas.height = size;
   const cx = size/2, cy = size/2, r = size*0.4, inner = size*0.22;
   ctx.clearRect(0,0,size,size);
   if (data.length === 0) return;
   const total = data.reduce((s,d) => s+d.total, 0);
+  const holeColor = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#ffffff';
   let start = -Math.PI/2;
   data.forEach(d => {
     const slice = (d.total/total) * Math.PI * 2;
@@ -1536,7 +1805,7 @@ function drawPie(data) {
   });
   ctx.beginPath();
   ctx.arc(cx, cy, inner, 0, Math.PI*2);
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = holeColor;
   ctx.fill();
 }
 
@@ -1567,51 +1836,31 @@ function downloadCSV() {
 // ============================
 // SETTINGS
 // ============================
+const pencilSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+const trashSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+
 function renderSettings() {
+  const pref = localStorage.getItem(THEME_KEY) || 'system';
+  applyTheme(pref);
   const cats = getCategories();
   const expEl = document.getElementById('settings-expense-list');
   const incEl = document.getElementById('settings-income-list');
-  const renderCatList = (list) => list.map(cat => `
-    <div class="cat-list-item">
-      ${categoryIconHtml(cat.icon, cat.color, 16)}
-      <div class="cat-list-info">
-        <div class="cat-list-name">${cat.name}</div>
-        <div class="cat-list-badge">${cat.isDefault ? 'Predefinita' : 'Personalizzata'}</div>
-      </div>
-      <div class="cat-list-btns">
-        <button class="icon-btn edit" onclick="openEditCat(${cat.id})">${iconSvg('credit-card','#3b82f6',14)}</button>
-        ${!cat.isDefault ? `<button class="icon-btn del" onclick="deleteCat(${cat.id})">${iconSvg('shopping-cart','#ef4444',14)}</button>` : ''}
-      </div>
-    </div>`).join('');
-  expEl.innerHTML = renderCatList(cats.filter(c=>c.type==='expense'));
-  incEl.innerHTML = renderCatList(cats.filter(c=>c.type==='income'));
-}
-
-// Edit icon using pencil-like SVG
-const pencilSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-const trashSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
-
-// patch renderSettings to use proper icons
-function renderSettings() {
-  const cats = getCategories();
-  const expEl = document.getElementById('settings-expense-list');
-  const incEl = document.getElementById('settings-income-list');
-  const renderCatList = (list) => list.length===0
-    ? '<div style="padding:16px;text-align:center;color:var(--gray-400);font-size:14px;">Nessuna</div>'
+  const renderCatList = (list, showBudget) => list.length===0
+    ? '<div style="padding:16px;text-align:center;color:var(--ink-faint);font-size:14px;">Nessuna</div>'
     : list.map(cat => `
       <div class="cat-list-item">
         ${categoryIconHtml(cat.icon, cat.color, 16)}
         <div class="cat-list-info">
           <div class="cat-list-name">${cat.name}</div>
-          <div class="cat-list-badge">${cat.isDefault ? 'Predefinita' : 'Personalizzata'}</div>
+          <div class="cat-list-badge">${cat.isDefault ? 'Predefinita' : 'Personalizzata'}${showBudget && cat.budget ? ` · Budget ${fmtEur(cat.budget)}/mese` : ''}</div>
         </div>
         <div class="cat-list-btns">
           <button class="icon-btn edit" onclick="openEditCat(${cat.id})">${pencilSvg}</button>
           ${!cat.isDefault ? `<button class="icon-btn del" onclick="deleteCat(${cat.id})">${trashSvg}</button>` : ''}
         </div>
       </div>`).join('');
-  expEl.innerHTML = renderCatList(cats.filter(c=>c.type==='expense'));
-  incEl.innerHTML = renderCatList(cats.filter(c=>c.type==='income'));
+  expEl.innerHTML = renderCatList(cats.filter(c=>c.type==='expense'), true);
+  incEl.innerHTML = renderCatList(cats.filter(c=>c.type==='income'), false);
 }
 
 function deleteCat(id) {
@@ -1654,12 +1903,13 @@ function buildColorGrid() {
 }
 function setCatType(t) {
   modalCatType = t;
-  document.getElementById('cat-type-expense').style.background = t==='expense' ? 'white' : 'var(--gray-100)';
-  document.getElementById('cat-type-expense').style.borderColor = t==='expense' ? 'var(--red)' : 'transparent';
-  document.getElementById('cat-type-expense').style.color = t==='expense' ? 'var(--red)' : 'var(--gray-400)';
-  document.getElementById('cat-type-income').style.background = t==='income' ? 'white' : 'var(--gray-100)';
-  document.getElementById('cat-type-income').style.borderColor = t==='income' ? 'var(--green)' : 'transparent';
-  document.getElementById('cat-type-income').style.color = t==='income' ? 'var(--green)' : 'var(--gray-400)';
+  document.getElementById('cat-type-expense').style.background = t==='expense' ? 'var(--surface)' : 'var(--surface-alt)';
+  document.getElementById('cat-type-expense').style.borderColor = t==='expense' ? 'var(--clay)' : 'transparent';
+  document.getElementById('cat-type-expense').style.color = t==='expense' ? 'var(--clay)' : 'var(--ink-faint)';
+  document.getElementById('cat-type-income').style.background = t==='income' ? 'var(--surface)' : 'var(--surface-alt)';
+  document.getElementById('cat-type-income').style.borderColor = t==='income' ? 'var(--forest)' : 'transparent';
+  document.getElementById('cat-type-income').style.color = t==='income' ? 'var(--forest)' : 'var(--ink-faint)';
+  document.getElementById('cat-budget-row').style.display = t === 'expense' ? 'block' : 'none';
 }
 function setCatIcon(icon) { modalCatIcon = icon; buildIconGrid(); }
 function setCatColor(color) { modalCatColor = color; buildColorGrid(); }
@@ -1668,6 +1918,7 @@ function openCreateCat() {
   modalCatMode = 'create'; modalCatId = null;
   modalCatType = 'expense'; modalCatIcon = 'utensils'; modalCatColor = '#f97316';
   document.getElementById('cat-name-input').value = '';
+  document.getElementById('cat-budget-input').value = '';
   document.getElementById('modal-cat-title').textContent = 'Nuova Categoria';
   document.getElementById('modal-cat-submit').textContent = 'CREA';
   document.getElementById('cat-type-row').style.display = 'flex';
@@ -1683,9 +1934,11 @@ function openEditCat(id) {
   modalCatMode = 'edit'; modalCatId = id;
   modalCatType = cat.type; modalCatIcon = cat.icon; modalCatColor = cat.color;
   document.getElementById('cat-name-input').value = cat.name;
+  document.getElementById('cat-budget-input').value = cat.budget || '';
   document.getElementById('modal-cat-title').textContent = 'Modifica Categoria';
   document.getElementById('modal-cat-submit').textContent = 'SALVA';
   document.getElementById('cat-type-row').style.display = 'none';
+  document.getElementById('cat-budget-row').style.display = cat.type === 'expense' ? 'block' : 'none';
   buildIconGrid(); buildColorGrid();
   openModal('modal-cat');
 }
@@ -1693,13 +1946,15 @@ function openEditCat(id) {
 document.getElementById('modal-cat-submit').onclick = function() {
   const name = document.getElementById('cat-name-input').value.trim();
   if (!name) { toast('Inserisci un nome', 'error'); return; }
+  const budgetRaw = document.getElementById('cat-budget-input').value;
+  const budget = (modalCatType === 'expense' && budgetRaw) ? parseFloat(budgetRaw) : null;
   const cats = getCategories();
   if (modalCatMode === 'create') {
-    cats.push({ id: nextId(cats), name, type: modalCatType, icon: modalCatIcon, color: modalCatColor, isDefault: false });
+    cats.push({ id: nextId(cats), name, type: modalCatType, icon: modalCatIcon, color: modalCatColor, isDefault: false, budget });
     toast('Categoria creata!');
   } else {
     const idx = cats.findIndex(c => c.id===modalCatId);
-    if (idx>=0) { cats[idx].name=name; cats[idx].icon=modalCatIcon; cats[idx].color=modalCatColor; }
+    if (idx>=0) { cats[idx].name=name; cats[idx].icon=modalCatIcon; cats[idx].color=modalCatColor; cats[idx].budget=budget; }
     toast('Categoria aggiornata!');
   }
   saveCategories(cats);
@@ -1758,6 +2013,7 @@ function doImport() {
   const cats = getCategories();
   const txs = getTransactions();
   let newCatId = nextId(cats);
+  const count = parsedImportData.length;
 
   parsedImportData.forEach(row => {
     let cat = cats.find(c => c.name.toLowerCase()===row.categoryName.toLowerCase() && c.type===row.type);
@@ -1773,8 +2029,7 @@ function doImport() {
   parsedImportData = [];
   document.getElementById('import-preview').style.display = 'none';
   document.getElementById('import-confirm-btn').style.display = 'none';
-  toast(`${parsedImportData.length || 'Transazioni'} importate!`);
-  toast('Import completato!');
+  toast(`${count} transazioni importate!`);
   navigate('home');
 }
 
@@ -1796,6 +2051,11 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 // ============================
 // INIT
 // ============================
+document.addEventListener('gesturestart', (e) => e.preventDefault());
+document.addEventListener('gesturechange', (e) => e.preventDefault());
+// iOS Safari only applies CSS :active states if a touchstart listener is registered somewhere on the page.
+document.addEventListener('touchstart', () => {}, { passive: true });
+
 document.addEventListener('DOMContentLoaded', () => {
   renderHome();
   // PWA service worker
