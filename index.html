@@ -459,6 +459,8 @@
     }
     .file-input-btn svg { width: 20px; height: 20px; }
     .import-preview { background: var(--surface-alt); border-radius: var(--r-sm); padding: 12px; margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+    .import-mode { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+    .import-mode label { display: flex; align-items: center; gap: 8px; }
     .import-confirm-btn {
       width: 100%; padding: 14px; border-radius: var(--r-md);
       background: var(--forest); color: white; font-size: 15px; font-weight: 700; margin-top: 12px;
@@ -839,6 +841,17 @@
       </button>
     </div>
 
+    <button class="settings-action-card active-scale" style="width:100%;text-align:left;" onclick="downloadCSV()">
+      <div class="settings-action-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div class="settings-action-info">
+        <div class="settings-action-title">Backup (esporta CSV)</div>
+        <div class="settings-action-sub" id="settings-backup-sub">Esporta tutti i movimenti</div>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
     <button class="settings-action-card active-scale" style="width:100%;text-align:left;" onclick="navigate('import')">
       <div class="settings-action-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -906,6 +919,10 @@
         <input type="file" accept=".csv" style="display:none;" onchange="handleCsvFile(this)" />
       </label>
       <div id="import-preview" style="display:none;" class="import-preview"></div>
+      <div id="import-mode" style="display:none;" class="import-mode">
+        <label><input type="radio" name="import-mode" value="merge" checked onchange="updateImportPreview()"> <span><strong>Unisci</strong> ai dati attuali (salta i duplicati)</span></label>
+        <label><input type="radio" name="import-mode" value="replace" onchange="updateImportPreview()"> <span><strong>Sostituisci</strong> tutti i dati attuali</span></label>
+      </div>
       <button id="import-confirm-btn" style="display:none;" class="import-confirm-btn" onclick="doImport()">Importa transazioni</button>
     </div>
     <div class="logo-footer"><span>CASHFLOW</span></div>
@@ -1728,7 +1745,7 @@ function renderReports() {
   const repBal = document.getElementById('rep-balance');
   repBal.textContent = fmtEur(balance);
   repBal.style.color = balance >= 0 ? 'var(--forest)' : 'var(--clay)';
-  document.getElementById('rep-csv-sub').textContent = `${txs.length} transazioni`;
+  document.getElementById('rep-csv-sub').textContent = `${txs.length} transazioni · ${backupLabel().toLowerCase()}`;
 
   // Category breakdown
   const filtered = txs.filter(t => t.type === repType);
@@ -1809,6 +1826,38 @@ function drawPie(data) {
   ctx.fill();
 }
 
+const LAST_BACKUP_KEY = 'cf_last_backup';
+const BACKUP_REMINDER_DAYS = 14;
+
+function daysSinceBackup() {
+  const last = localStorage.getItem(LAST_BACKUP_KEY);
+  if (!last) return null;
+  return Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+}
+
+function backupLabel() {
+  const d = daysSinceBackup();
+  if (d === null) return 'Mai fatto un backup';
+  if (d === 0) return 'Ultimo backup: oggi';
+  if (d === 1) return 'Ultimo backup: ieri';
+  return `Ultimo backup: ${d} giorni fa`;
+}
+
+function renderBackupInfo() {
+  const el = document.getElementById('settings-backup-sub');
+  if (el) el.textContent = backupLabel();
+}
+
+// The data lives only on this device: nudge towards a CSV export every couple of weeks
+function maybeRemindBackup() {
+  if (getTransactions().length === 0) return;
+  const d = daysSinceBackup();
+  if (d !== null && d < BACKUP_REMINDER_DAYS) return;
+  if (sessionStorage.getItem('cf_backup_nagged')) return;
+  sessionStorage.setItem('cf_backup_nagged', '1');
+  toastAction(d === null ? 'Non hai ancora fatto un backup' : `Ultimo backup ${d} giorni fa`, 'Scarica', downloadCSV);
+}
+
 function downloadCSV() {
   const txs = getTransactions();
   const cats = getCategories();
@@ -1830,6 +1879,8 @@ function downloadCSV() {
   a.href = url; a.download = `cashflow_${todayStr()}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  localStorage.setItem(LAST_BACKUP_KEY, new Date().toISOString());
+  renderBackupInfo();
   toast('CSV scaricato!');
 }
 
@@ -1842,6 +1893,7 @@ const trashSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fi
 function renderSettings() {
   const pref = localStorage.getItem(THEME_KEY) || 'system';
   applyTheme(pref);
+  renderBackupInfo();
   const cats = getCategories();
   const expEl = document.getElementById('settings-expense-list');
   const incEl = document.getElementById('settings-income-list');
@@ -1972,21 +2024,70 @@ function handleCsvFile(input) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
-    const text = e.target.result;
-    parsedImportData = parseCsv(text);
-    const previewEl = document.getElementById('import-preview');
-    const confirmBtn = document.getElementById('import-confirm-btn');
-    if (parsedImportData.length === 0) {
-      previewEl.style.display = '';
-      previewEl.textContent = 'Nessuna transazione trovata. Controlla il formato.';
-      confirmBtn.style.display = 'none';
-    } else {
-      previewEl.style.display = '';
-      previewEl.innerHTML = `<strong>${parsedImportData.length} transazioni trovate.</strong><br>Prima riga: ${parsedImportData[0].date} — ${parsedImportData[0].categoryName} — ${parsedImportData[0].type} — €${parsedImportData[0].amount}`;
-      confirmBtn.style.display = 'block';
-    }
+    parsedImportData = parseCsv(e.target.result);
+    input.value = '';
+    updateImportPreview();
   };
   reader.readAsText(file, 'UTF-8');
+}
+
+function importMode() {
+  const el = document.querySelector('input[name="import-mode"]:checked');
+  return el ? el.value : 'merge';
+}
+
+// Key used to recognise the same transaction across backups
+function txKey(date, categoryName, type, amount, description) {
+  return [date, (categoryName||'').trim().toLowerCase(), type, Number(amount).toFixed(2), (description||'').trim().toLowerCase()].join('|');
+}
+
+// Splits parsed rows into new ones and ones already present. Multiset-aware:
+// two identical coffees on the same day are kept if the file has both.
+function splitDuplicates(rows) {
+  const cats = getCategories();
+  const existing = new Map();
+  getTransactions().forEach(tx => {
+    const cat = cats.find(c => c.id===tx.categoryId);
+    const k = txKey(tx.date, cat ? cat.name : '', tx.type, tx.amount, tx.description);
+    existing.set(k, (existing.get(k)||0) + 1);
+  });
+  const fresh = [];
+  let dupes = 0;
+  rows.forEach(r => {
+    const k = txKey(r.date, r.categoryName, r.type, r.amount, r.description);
+    const n = existing.get(k) || 0;
+    if (n > 0) { existing.set(k, n-1); dupes++; } else fresh.push(r);
+  });
+  return { fresh, dupes };
+}
+
+function updateImportPreview() {
+  const previewEl = document.getElementById('import-preview');
+  const modeEl = document.getElementById('import-mode');
+  const confirmBtn = document.getElementById('import-confirm-btn');
+  previewEl.style.display = '';
+  if (parsedImportData.length === 0) {
+    previewEl.textContent = 'Nessuna transazione trovata. Controlla il formato.';
+    modeEl.style.display = 'none';
+    confirmBtn.style.display = 'none';
+    return;
+  }
+  const hasData = getTransactions().length > 0;
+  modeEl.style.display = hasData ? '' : 'none';
+  let detail;
+  if (!hasData) detail = 'Verranno importate tutte.';
+  else if (importMode() === 'replace') detail = `I ${getTransactions().length} movimenti attuali verranno <strong>cancellati</strong> e sostituiti.`;
+  else {
+    const { fresh, dupes } = splitDuplicates(parsedImportData);
+    detail = `${fresh.length} nuove, ${dupes} già presenti (saltate).`;
+  }
+  const first = parsedImportData[0];
+  previewEl.innerHTML = `<strong>${parsedImportData.length} transazioni trovate.</strong> ${detail}<br>Prima riga: ${first.date} — ${escapeHtml(first.categoryName)} — ${first.type} — €${first.amount}`;
+  confirmBtn.style.display = 'block';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function parseCsv(text) {
@@ -2010,26 +2111,32 @@ function parseCsv(text) {
 
 function doImport() {
   if (parsedImportData.length === 0) return;
+  const replace = importMode() === 'replace' && getTransactions().length > 0;
+  if (replace && !confirm('Cancellare tutti i movimenti attuali e sostituirli con quelli del file?')) return;
   const cats = getCategories();
-  const txs = getTransactions();
+  const txs = replace ? [] : getTransactions();
+  const rows = replace ? parsedImportData : splitDuplicates(parsedImportData).fresh;
   let newCatId = nextId(cats);
-  const count = parsedImportData.length;
+  let newTxId = nextId(txs);
+  const now = new Date().toISOString();
 
-  parsedImportData.forEach(row => {
+  rows.forEach(row => {
     let cat = cats.find(c => c.name.toLowerCase()===row.categoryName.toLowerCase() && c.type===row.type);
     if (!cat) {
       cat = { id: newCatId++, name: row.categoryName, type: row.type, icon: 'circle', color: '#6b7280', isDefault: false };
       cats.push(cat);
     }
-    txs.push({ id: nextId(txs), categoryId: cat.id, amount: row.amount, type: row.type, description: row.description, date: row.date, createdAt: new Date().toISOString() });
+    txs.push({ id: newTxId++, categoryId: cat.id, amount: row.amount, type: row.type, description: row.description, date: row.date, createdAt: now });
   });
 
   saveCategories(cats);
   saveTransactions(txs);
+  const skipped = parsedImportData.length - rows.length;
   parsedImportData = [];
   document.getElementById('import-preview').style.display = 'none';
+  document.getElementById('import-mode').style.display = 'none';
   document.getElementById('import-confirm-btn').style.display = 'none';
-  toast(`${count} transazioni importate!`);
+  toast(`${rows.length} transazioni importate` + (skipped ? `, ${skipped} duplicati saltati` : '') + '!');
   navigate('home');
 }
 
@@ -2058,6 +2165,9 @@ document.addEventListener('touchstart', () => {}, { passive: true });
 
 document.addEventListener('DOMContentLoaded', () => {
   renderHome();
+  // Ask the browser not to evict localStorage under storage pressure (data exists only on this device)
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  setTimeout(maybeRemindBackup, 1500);
   // PWA service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
