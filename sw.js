@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cashflow-v4';
+const CACHE_NAME = 'cashflow-v5';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(

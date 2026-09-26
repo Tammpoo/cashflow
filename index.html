@@ -1038,19 +1038,11 @@ function nextId(arr) {
   return arr.length === 0 ? 1 : Math.max(...arr.map(x => x.id)) + 1;
 }
 
-// Sort categories with most-recently-used first (falls back to A-Z for unused ones)
+// Categories in alphabetical order
 function sortedCatsForType(type) {
-  const cats = getCategories().filter(c => c.type === type);
-  const txs = getTransactions();
-  const lastUsed = {};
-  txs.forEach(t => { if (!lastUsed[t.categoryId] || t.date > lastUsed[t.categoryId]) lastUsed[t.categoryId] = t.date; });
-  return cats.slice().sort((a,b) => {
-    const la = lastUsed[a.id], lb = lastUsed[b.id];
-    if (la && lb) return lb.localeCompare(la);
-    if (la && !lb) return -1;
-    if (!la && lb) return 1;
-    return a.name.localeCompare(b.name, 'it');
-  });
+  return getCategories()
+    .filter(c => c.type === type)
+    .sort((a,b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
 }
 
 // ============================
