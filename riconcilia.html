@@ -140,8 +140,11 @@
   <section class="card">
     <h2><span class="step">3</span> Confronto</h2>
     <div class="row-inline">
-      <label>Tolleranza sulla data: ± <input type="number" id="tol-days" value="4" min="0" max="15" style="width:60px" /> giorni</label>
-      <span class="muted">· i pagamenti con carta spesso compaiono in banca qualche giorno dopo</span>
+      <label>Segno le spese in CashFlow fino a <input type="number" id="tol-after" value="15" min="0" max="60" style="width:64px" /> giorni dopo la banca</label>
+    </div>
+    <div class="row-inline">
+      <label>e fino a <input type="number" id="tol-before" value="3" min="0" max="15" style="width:64px" /> giorni prima</label>
+      <span class="muted">· es. pagamenti con carta che la banca registra qualche giorno dopo</span>
     </div>
     <div class="row-inline">
       <button class="btn" id="btn-compare" disabled>Confronta</button>
@@ -839,18 +842,19 @@ function mergeBankFiles() {
 }
 
 function compare() {
-  const tol = Math.max(0, +$('tol-days').value || 0);
+  // Window: the CashFlow entry may come up to `after` days later than the bank, or `before` days earlier
+  const after = Math.max(0, +$('tol-after').value || 0), before = Math.max(0, +$('tol-before').value || 0);
   const bank = mergeBankFiles();
-  const minDay = bank[0].day - tol, maxDay = bank[bank.length - 1].day + tol;
+  const minDay = bank[0].day - before, maxDay = bank[bank.length - 1].day + after;
   const app = state.app.txs.filter(t => t.day >= minDay && t.day <= maxDay).map(t => ({ ...t, used: false }));
 
   // Bank movements in date order each take the earliest free CashFlow entry in their window:
-  // with equal-width windows this matches as many movements as possible
+  // every window has the same width, so this matches as many movements as possible
   // (e.g. three 6 € payments a few days apart all find their partner).
   const pass = (list, amountOk) => list.filter(bt => {
     let best = null;
     for (const at of app) {
-      if (at.used || at.type !== bt.type || !amountOk(at.amount, bt.amount) || Math.abs(at.day - bt.day) > tol) continue;
+      if (at.used || at.type !== bt.type || !amountOk(at.amount, bt.amount) || at.day - bt.day > after || bt.day - at.day > before) continue;
       if (!best || at.day < best.day || (at.day === best.day && Math.abs(at.amount - bt.amount) < Math.abs(best.amount - bt.amount))) best = at;
     }
     if (!best) return true;
@@ -1029,6 +1033,12 @@ function exportCsv() {
 setupDrop('drop-app', 'input-app', loadAppFile);
 setupDrop('drop-bank', 'input-bank', loadBankFiles);
 $('btn-compare').addEventListener('click', compare);
+// Remember the date windows between visits
+['tol-after', 'tol-before'].forEach(id => {
+  const saved = lsGet('cf_rec_' + id);
+  if (saved != null) $(id).value = saved;
+  $(id).addEventListener('change', () => lsSet('cf_rec_' + id, +$(id).value));
+});
 </script>
 <!-- SheetJS Community Edition 0.18.5 (Apache-2.0) — reads .xlsx/.xls locally -->
 <script>
