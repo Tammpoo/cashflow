@@ -311,7 +311,15 @@ const RX = {
   out: /dare|uscit|addebit|debit|spese/i,
   in: /avere|entrat|accredit|credit/i,
   status: /^(state|stato|status)$/i,
+  net: /^(netto|net|net amount|importo netto)$/i,
+  gross: /^(lordo|gross|importo lordo)$/i,
+  name: /^(nome|name|controparte|counterparty)$/i,
+  kind: /^(tipo|type)$/i,
+  currency: /^(valuta|currency|divisa)$/i,
+  memo: /impatto sul saldo|balance impact/i,
 };
+// Rows that are not real movements (refused, pending, PayPal memo lines…)
+const SKIP_STATUS = /revert|declin|fail|annull|rifiut|pending|in attesa|in sospeso|negat|scadut|cancel/i;
 
 function findHeaderRow(rows) {
   for (let i = 0; i < Math.min(rows.length, 40); i++) {
@@ -326,7 +334,10 @@ function guessMapping(header) {
   let date = idx(RX.dateOp);
   if (date < 0) date = header.findIndex(h => RX.header.test(h) && !RX.dateVal.test(h));
   if (date < 0) date = idx(RX.header);
-  let amount = idx(RX.amount);
+  // Net first (PayPal/Shopify: what actually reached the account), then the usual amount names
+  let amount = idx(RX.net);
+  if (amount < 0) amount = idx(RX.amount);
+  if (amount < 0) amount = idx(RX.gross);
   let out = -1, inn = -1;
   if (amount < 0) {
     out = header.findIndex(h => RX.out.test(h) && !RX.in.test(h));
@@ -334,10 +345,15 @@ function guessMapping(header) {
     if (out < 0 || inn < 0) { amount = idx(RX.money); out = inn = -1; }
   }
   const descs = header.map((h, i) => [h, i]).filter(([h]) => RX.desc.test(h) && !RX.header.test(h.replace(/descriz/i, ''))).map(([, i]) => i);
+  // A counterparty column (PayPal "Nome") is the most readable description; the transaction type goes next to it
+  const name = idx(RX.name);
+  if (name >= 0) { descs.unshift(name); if (descs.length < 2 && idx(RX.kind) >= 0) descs.push(idx(RX.kind)); }
+  const cur = idx(RX.currency);
   return {
     date, mode: out >= 0 ? 'split' : 'single', amount, out, in: inn,
     desc: descs[0] ?? -1, desc2: descs[1] ?? -1,
     status: idx(RX.status), invert: false,
+    currency: cur >= 0 && cur !== date ? cur : -1, memo: idx(RX.memo),
   };
 }
 
@@ -372,10 +388,13 @@ async function loadBankFiles(files) {
 
 function bankTxs(b) {
   if (b.error) return [];
-  if (b.kind === 'pdf') return b.txs.map(t => b.map.invert ? { ...t, type: t.type === 'income' ? 'expense' : 'income' } : t);
+  if (b.kind === 'pdf') return b.txs.map(t => ({ ...t, file: b.name, type: b.map.invert ? (t.type === 'income' ? 'expense' : 'income') : t.type }));
   const m = b.map, out = [];
   b.rows.forEach(r => {
-    if (m.status >= 0 && /revert|declin|fail|annull|rifiut|pending|in attesa/i.test(String(r[m.status]))) return;
+    if (m.status >= 0 && SKIP_STATUS.test(String(r[m.status]))) return;
+    if (m.memo >= 0 && /^memo$/i.test(String(r[m.memo]).trim())) return;
+    // Foreign-currency lines: the EUR side of the conversion is what hit your balance
+    if (m.currency >= 0 && String(r[m.currency]).trim() && !/^(eur|€)$/i.test(String(r[m.currency]).trim())) return;
     const date = parseDate(r[m.date]);
     let amt;
     if (m.mode === 'split') {
@@ -645,7 +664,7 @@ function renderPdfCard(b) {
 // ============================
 // TRANSFERS BETWEEN YOUR OWN ACCOUNTS & CASH WITHDRAWALS
 // ============================
-const TRANSFER_HINT = /giroconto|trasferimento (a|da|tra)|bonifico a (te stesso|me stesso|favore di se stesso)|ricarica (revolut|carta|prepagata|conto)|top.?up|ricarica da|da revolut|a revolut|trade republic|deposito|versamento su|accredito da revolut|transfer to|transfer from|own account/i;
+const TRANSFER_HINT = /trasferimento (generico )?(da|a|su) (conto bancario|carta)|bank deposit to pp|deposito (generico )?(da|su) conto|general card deposit|withdraw(al)? to bank|prelievo (su|verso) conto|giroconto|trasferimento (a|da|tra)|bonifico a (te stesso|me stesso|favore di se stesso)|ricarica (revolut|carta|prepagata|conto)|top.?up|ricarica da|da revolut|a revolut|trade republic|deposito|versamento su|accredito da revolut|transfer to|transfer from|own account/i;
 function flagTransfers(missing) {
   // Same amount leaving one file and entering another within 3 days → money moved between your accounts
   missing.forEach(a => {
@@ -838,7 +857,15 @@ function mergeBankFiles() {
     });
     counts.forEach((list, k) => { if (!perKey.has(k) || perKey.get(k).length < list.length) perKey.set(k, list); });
   });
-  return [...perKey.values()].flat().sort((a,b) => a.day - b.day);
+  const all = [...perKey.values()].flat().sort((a,b) => a.day - b.day);
+  // A PayPal payment also appears on the bank or card as "PAYPAL *…": keep the PayPal line, which names the shop
+  const drop = new Set();
+  all.forEach(t => {
+    if (!/paypal|pay pal/i.test(t.raw) || drop.has(t)) return;
+    const twin = all.find(x => x !== t && !drop.has(x) && x.file !== t.file && x.type === t.type && Math.abs(x.amount - t.amount) < 0.005 && Math.abs(x.day - t.day) <= 4 && !/paypal/i.test(x.raw));
+    if (twin) drop.add(t);
+  });
+  return all.filter(t => !drop.has(t));
 }
 
 function compare() {
